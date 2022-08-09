@@ -1,2 +1,2 @@
 # capstone
-team henri deafblind watch
+T3 team henri concussion detection addition for helmet
