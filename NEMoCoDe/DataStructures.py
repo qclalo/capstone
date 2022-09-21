@@ -45,112 +45,101 @@ class Package:
 class ImpactData:
     def __init__(self, severity, data):
         self.severity = severity
-        self.data = data 
+        self.data = data
 
 
 class ControllerInterface:
-    """
-    Gets a packet from an accelerometer with a given id
-    :param id: The id of the accelerometer to pull data from
-    returns A packet representing x - y - z acceleration at a moment in time
-    """
-
     @abstractmethod
     def get_accelerometer_packet(self, id: str) -> Packet:
+        """
+        Gets a packet from an accelerometer with a given id
+        :param str id: The id of the accelerometer to pull data from
+        returns A packet representing x - y - z acceleration at a moment in time
+        """
         pass
-
-    """
-    @param Packet[]: a group of packets representing a single data collection moment
-    @throws An error if the time between packets is not adequately synchronized
-    @returns A Package created from an array of Packets with synchronized timings
-    """
 
     @abstractmethod
     def assemble_package(self, packets) -> Package:
+        """
+        :param Packet[] packets: a group of packets representing a single data collection moment
+        :raises An error if the time between packets is not adequately synchronized or ids are different
+        :returns A Package created from an array of Packets with synchronized timings
+        """
         pass
-
-    """
-    Adds a Package to the front of the queue and removes the oldest Package from the queue
-    @param pack: the Package object to be added to the queue    
-    """
 
     @abstractmethod
     def add_package_to_queue(self, pack: Package):
+        """
+        Adds a Package to the front of the queue and removes the oldest Package from the queue
+        :param Package pack: the Package object to be added to the queue
+        """
         pass
-
-    """
-    @param accelPort: serial id of the specific accelerometer being connected to
-    @param id: ID to set for the accelerometer
-    @throws An error if the connection has failed to initialize
-    @returns an accelerometer object representing the accelerometer connected to
-    """
 
     @abstractmethod
     def initialize_connection(self, accel_port: int, id: str) -> AccelerometerData:
+        """
+        :param SerialID accel_port: serial id of the specific accelerometer being connected to
+        :param str id: ID to set for the accelerometer
+        :raises An error if the connection has failed to initialize
+        :returns an accelerometer object representing the accelerometer connected to
+        """
         pass
-
-    """
-    Start collecting data from all of the accelerometers
-    Save this data in a circular array / queue type data struct
-    Watch for potentially concussive events
-    If a concussive event is detected, take a snapshot of the data and send back to user
-    """
 
     @abstractmethod
-    def runData_collection_loop(self):
+    def run_data_collection_loop(self):
+        """
+        Start collecting data from all of the accelerometers
+        Save this data in a circular array / queue type data struct
+        Watch for potentially concussive events
+        If a concussive event is detected, take a snapshot of the data and send back to user
+        """
         pass
-
-    """
-    Algorithmic checking of queue for potential concussive impact above threshold limit
-    @returns true or false indicating if a concussive event has occurred
-    """
 
     @abstractmethod
     def check_queue_for_concussion(self) -> bool:
+        """
+        Algorithmic checking of queue for potential concussive impact above threshold limit
+        :returns true or false indicating if a concussive event has occurred
+        """
         pass
-
-    """
-    Create an ImpactData object from the current queue data
-    This object will contain critical information that the client controller needs to visualize the data
-    """
 
     @abstractmethod
     def create_impact_data(self) -> ImpactData:
+        """
+        Create an ImpactData object from the current queue data
+        This object will contain critical information that the client controller needs to visualize the data
+        """
         pass
-
-    """
-    Send alert to application with ImpactData for further analysis
-    @param report: ImpactData object sent to application for further analysis
-    """
 
     @abstractmethod
     def alert_user(self, report: ImpactData):
+        """
+        Send alert to application with ImpactData for further analysis
+        :param ImpactData report: ImpactData object sent to application for further analysis
+        """
         pass
-
-    """
-    connects the microcontroller to phone application and initiates mic`rocontroller in standby mode
-    @returns a true or false indicating if the connection is successful`
-    """
 
     @abstractmethod
     def connect_to_user_device(self) -> bool:
+        """
+        connects the microcontroller to phone application and initiates mic`rocontroller in standby mode
+        @returns a true or false indicating if the connection is successful`
+        """
         pass
-
-    """
-    Start data collection loop and give diagnostic info to microcontroller/application
-    """
 
     @abstractmethod
     def start_session(self):
+        """
+        Start data collection loop and give diagnostic info to microcontroller/application
+        """
         pass
-
-    """
-    Monitor connection with accelerometers for functionality and connection with application for 
-    start session indication. 
-    """
 
     @abstractmethod
     def run_standby_loop(self):
+        """
+        Monitor connection with accelerometers for functionality and connection with application for
+        start session indication.
+        """
         pass
 
 
@@ -159,7 +148,24 @@ class Controller(ControllerInterface):
         pass
 
     def assemble_package(self, packets) -> Package:
-        pass
+        """
+        :param Packet[] packets: a group of packets representing a single data collection moment
+        :raises An error if the time between packets is not adequately synchronized or ids are different
+        :returns A Package created from an array of Packets with synchronized timings
+        """
+        packet_id = packets[0].id
+        packet_time = packets[0].t
+        time_tolerance = 0.001
+        avg_time = packet_time
+        for packet in packets[1:]:
+            if packet_id != packet.id:
+                raise Exception("Packet id's do not match")
+            packet_id = packet.id
+            curr_packet_time = packet.t
+            if packet_time - time_tolerance >= curr_packet_time or packet_time + time_tolerance <= curr_packet_time:
+                raise Exception("Packets are not synchronized correctly")
+            avg_time += curr_packet_time
+        return Package(packet_id, avg_time / len(packets), packets)
 
     def add_package_to_queue(self, pack: Package):
         pass
@@ -167,7 +173,7 @@ class Controller(ControllerInterface):
     def initialize_connection(self, accel_port: int, id: str) -> AccelerometerData:
         pass
 
-    def runData_collection_loop(self):
+    def run_data_collection_loop(self):
         pass
 
     def check_queue_for_concussion(self) -> bool:
