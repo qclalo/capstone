@@ -1,2 +1,2 @@
-# capstone
-T3 team henri concussion detection addition for helmet
+# NEMo CoDe (Network Enabled Modular Concussion Device)
+T3 Team Henri Concussion Detection Python and Kotlin Implementation
