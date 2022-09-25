@@ -24,6 +24,9 @@ class AccelerometerPacket:
     def get_z(self):
         return self.z
 
+    def get_accel_data(self):
+        return {self.x, self.y, self.z}
+
     def reset(self):
         self.t = 0
 
