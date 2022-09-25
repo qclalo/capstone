@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 
-class AccelerometerData:
+class AccelerometerPacket:
     def __init__(self, id: str, t: float, x: float, y: float, z: float):
         self.id = id
         self.t = t
@@ -28,15 +28,9 @@ class AccelerometerData:
         self.t = 0
 
 
-class Packet:
-    def __init__(self, id: str, t: float, accel: AccelerometerData):
-        self.id = id
-        self.t = t
-        self.accel = accel
-
-
 class Package:
     def __init__(self, id: str, t: float, packs):
+        # packs: AccelerometerPacket[]
         self.id = id
         self.t = t
         self.packs = packs
@@ -50,7 +44,7 @@ class ImpactData:
 
 class ControllerInterface:
     @abstractmethod
-    def get_accelerometer_packet(self, id: str) -> Packet:
+    def get_accelerometer_packet(self, id: str) -> AccelerometerPacket:
         """
         Gets a packet from an accelerometer with a given id
         :param str id: The id of the accelerometer to pull data from
@@ -76,7 +70,7 @@ class ControllerInterface:
         pass
 
     @abstractmethod
-    def initialize_connection(self, accel_port: int, id: str) -> AccelerometerData:
+    def initialize_connection(self, accel_port: int, id: str) -> AccelerometerPacket:
         """
         :param SerialID accel_port: serial id of the specific accelerometer being connected to
         :param str id: ID to set for the accelerometer
@@ -144,7 +138,7 @@ class ControllerInterface:
 
 
 class Controller(ControllerInterface):
-    def get_accelerometer_packet(self, id: str) -> Packet:
+    def get_accelerometer_packet(self, id: str) -> AccelerometerPacket:
         pass
 
     def assemble_package(self, packets) -> Package:
@@ -170,7 +164,7 @@ class Controller(ControllerInterface):
     def add_package_to_queue(self, pack: Package):
         pass
 
-    def initialize_connection(self, accel_port: int, id: str) -> AccelerometerData:
+    def initialize_connection(self, accel_port: int, id: str) -> AccelerometerPacket:
         pass
 
     def run_data_collection_loop(self):
