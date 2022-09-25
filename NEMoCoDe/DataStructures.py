@@ -32,9 +32,8 @@ class AccelerometerPacket:
 
 
 class Package:
-    def __init__(self, id: str, t: float, packs):
+    def __init__(self, t: float, packs):
         # packs: AccelerometerPacket[]
-        self.id = id
         self.t = t
         self.packs = packs
 
@@ -150,19 +149,17 @@ class Controller(ControllerInterface):
         :raises An error if the time between packets is not adequately synchronized or ids are different
         :returns A Package created from an array of Packets with synchronized timings
         """
-        packet_id = packets[0].id
         packet_time = packets[0].t
         time_tolerance = 0.001
         avg_time = packet_time
-        for packet in packets[1:]:
-            if packet_id != packet.id:
+        for idx, packet in enumerate(packets):
+            if packet.id != idx:
                 raise Exception("Packet id's do not match")
-            packet_id = packet.id
             curr_packet_time = packet.t
             if packet_time - time_tolerance >= curr_packet_time or packet_time + time_tolerance <= curr_packet_time:
                 raise Exception("Packets are not synchronized correctly")
             avg_time += curr_packet_time
-        return Package(packet_id, avg_time / len(packets), packets)
+        return Package(avg_time / len(packets), packets)
 
     def add_package_to_queue(self, pack: Package):
         pass
