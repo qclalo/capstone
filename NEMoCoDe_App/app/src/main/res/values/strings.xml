@@ -4,9 +4,12 @@
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="add_device">Add Device</string>
+    <string name="cancel_add_device">Cancel</string>
+    <string name="add_new_device">Fill in the information below to add new device</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="no_devices_connected">No devices are currently connected</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="user_name">User Name</string>
+    <string name="device_id">Device ID</string>
 </resources>
