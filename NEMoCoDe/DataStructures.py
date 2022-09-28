@@ -133,31 +133,24 @@ class ControllerInterface:
 
 
 class Controller(ControllerInterface):
-    def get_accelerometer_packet(self, id: str) -> AccelerometerPacket:
+
+    def __init__(self, time: int):
+        self.time = 0
+
+    def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         pass
 
     def assemble_package(self, packets) -> Package:
         """
         :param Packet[] packets: a group of packets representing a single data collection moment
-        :raises An error if the time between packets is not adequately synchronized or ids are different
         :returns A Package created from an array of Packets with synchronized timings
         """
-        packet_time = packets[0].t
-        time_tolerance = 0.001
-        avg_time = packet_time
-        for idx, packet in enumerate(packets):
-            if packet.id != idx:
-                raise Exception("Packet id's do not match")
-            curr_packet_time = packet.t
-            if packet_time - time_tolerance >= curr_packet_time or packet_time + time_tolerance <= curr_packet_time:
-                raise Exception("Packets are not synchronized correctly")
-            avg_time += curr_packet_time
-        return Package(avg_time / len(packets), packets)
+        return Package(self.time, packets)
 
     def add_package_to_queue(self, pack: Package):
         pass
 
-    def initialize_connection(self, accel_port: int, id: str) -> AccelerometerPacket:
+    def initialize_connection(self, accel_port: int, id: int) -> AccelerometerPacket:
         pass
 
     def run_data_collection_loop(self):
