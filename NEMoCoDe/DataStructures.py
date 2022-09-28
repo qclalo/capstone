@@ -134,8 +134,9 @@ class ControllerInterface:
 
 class Controller(ControllerInterface):
 
-    def __init__(self, time: int):
+    def __init__(self, time: int, queue):
         self.time = 0
+        self.queue = []
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         pass
@@ -145,6 +146,7 @@ class Controller(ControllerInterface):
         :param Packet[] packets: a group of packets representing a single data collection moment
         :returns A Package created from an array of Packets with synchronized timings
         """
+        packets.sort(key = packets.id)
         return Package(self.time, packets)
 
     def add_package_to_queue(self, pack: Package):
