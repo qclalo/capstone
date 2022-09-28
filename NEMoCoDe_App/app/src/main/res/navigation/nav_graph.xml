@@ -3,26 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/mainMenuFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.nemocode_app.MainMenuFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_main_menu">
-
+        android:id="@+id/instructionMenuFragment"
+        android:name="com.example.nemocode_app.InstructionMenuFragment"
+        android:label="fragment_instruction_menu"
+        tools:layout="@layout/fragment_instruction_menu" >
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_instructionMenuFragment_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.nemocode_app.InstructionMenuFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_instruction_menu">
-
+        android:id="@+id/mainMenuFragment"
+        android:name="com.example.nemocode_app.MainMenuFragment"
+        android:label="fragment_main_menu"
+        tools:layout="@layout/fragment_main_menu" >
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_mainMenuFragment_to_instructionMenuFragment"
+            app:destination="@id/instructionMenuFragment" />
     </fragment>
 </navigation>
