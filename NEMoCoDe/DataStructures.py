@@ -134,9 +134,11 @@ class ControllerInterface:
 
 class Controller(ControllerInterface):
 
-    def __init__(self, time: int, queue):
+    def __init__(self, time: int, queue, queueIndex: int, queueLen: int):
         self.time = 0
         self.queue = []
+        self.queueIndex = 0
+        self.queueLen = 100000
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         pass
@@ -150,7 +152,11 @@ class Controller(ControllerInterface):
         return Package(self.time, packets)
 
     def add_package_to_queue(self, pack: Package):
-        pass
+        self.queue[self.queueIndex] = pack
+        if(self.queueIndex == self.queueLen - 1):
+            self.queueIndex = 0
+        else:
+            self.queueIndex = self.queueIndex + 1
 
     def initialize_connection(self, accel_port: int, id: int) -> AccelerometerPacket:
         pass
