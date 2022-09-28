@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
 class MainMenuFragment : Fragment() {
@@ -17,9 +19,13 @@ class MainMenuFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val noDevicesTextView: TextView = view.findViewById(R.id.no_devices)
+        noDevicesTextView.text = arguments.toString()
+        
         val addDeviceBtn : Button = view.findViewById(R.id.add_device_main)
         addDeviceBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_mainMenuFragment_to_instructionMenuFragment)
+            val action = MainMenuFragmentDirections.actionMainMenuFragmentToInstructionMenuFragment()
+            view.findNavController().navigate(action)
         }
     }
 }

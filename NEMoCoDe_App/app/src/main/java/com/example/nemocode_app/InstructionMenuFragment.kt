@@ -5,8 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputEditText
 
 class InstructionMenuFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -19,7 +22,12 @@ class InstructionMenuFragment : Fragment() {
 
         val addDeviceConfirmBtn : Button = view.findViewById(R.id.add_device_confirm)
         addDeviceConfirmBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_instructionMenuFragment_to_mainMenuFragment)
+            val userNameEditText : TextInputEditText = view.findViewById(R.id.userName)
+            val userName = userNameEditText.text.toString()
+
+            val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToMainMenuFragment(userName)
+            
+            findNavController().navigate(action)
         }
 
         val cancelBtn : Button = view.findViewById(R.id.cancel_button)
