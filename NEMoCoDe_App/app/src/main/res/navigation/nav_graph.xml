@@ -13,6 +13,14 @@
         <action
             android:id="@+id/action_instructionMenuFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
+        <action
+            android:id="@+id/action_instructionMenuFragment_to_oneDeviceFragment"
+            app:destination="@id/oneDeviceFragment" />
+        <argument
+            android:name="caller"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/mainMenuFragment"
@@ -27,5 +35,21 @@
             app:argType="string[]"
             android:defaultValue="@null"
             app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/oneDeviceFragment"
+        android:name="com.example.nemocode_app.OneDeviceFragment"
+        android:label="OneDeviceFragment" >
+        <action
+            android:id="@+id/action_oneDeviceFragment_to_instructionMenuFragment"
+            app:destination="@id/instructionMenuFragment" />
+        <action
+            android:id="@+id/action_oneDeviceFragment_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
+        <argument
+            android:name="deviceInfo"
+            app:argType="string[]"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

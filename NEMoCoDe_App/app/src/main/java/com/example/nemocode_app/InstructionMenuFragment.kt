@@ -11,6 +11,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputEditText
 
@@ -26,13 +28,20 @@ class InstructionMenuFragment : Fragment() {
         val addDeviceConfirmBtn : Button = view.findViewById(R.id.add_device_confirm)
         addDeviceConfirmBtn.setOnClickListener {
             val deviceInfo = getDeviceInfo(view)
-            val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToMainMenuFragment(deviceInfo)
+            val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToOneDeviceFragment(deviceInfo)
             findNavController().navigate(action)
         }
 
         val cancelBtn : Button = view.findViewById(R.id.cancel_button)
         cancelBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_instructionMenuFragment_to_mainMenuFragment)
+            val caller = this.arguments?.get("caller").toString()
+            if (caller == "OneDevice") {
+                val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToOneDeviceFragment()
+                findNavController().navigate(action)
+            } else {
+                val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToMainMenuFragment()
+                findNavController().navigate(action)
+            }
         }
     }
 
