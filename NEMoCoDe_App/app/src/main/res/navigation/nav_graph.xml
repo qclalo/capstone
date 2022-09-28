@@ -23,8 +23,9 @@
             android:id="@+id/action_mainMenuFragment_to_instructionMenuFragment"
             app:destination="@id/instructionMenuFragment" />
         <argument
-            android:name="no_devices"
-            app:argType="string"
-            android:defaultValue="args failed" />
+            android:name="deviceInfo"
+            app:argType="string[]"
+            android:defaultValue="@null"
+            app:nullable="true" />
     </fragment>
 </navigation>
