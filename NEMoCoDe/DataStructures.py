@@ -2,18 +2,14 @@ from abc import abstractmethod
 
 
 class AccelerometerPacket:
-    def __init__(self, id: str, t: float, x: float, y: float, z: float):
+    def __init__(self, id: int, x: float, y: float, z: float):
         self.id = id
-        self.t = t
         self.x = x
         self.y = y
         self.z = z
 
     def get_id(self):
         return self.id
-
-    def get_time(self):
-        return self.t
 
     def get_x(self):
         return self.x
@@ -26,9 +22,6 @@ class AccelerometerPacket:
 
     def get_accel_data(self):
         return {self.x, self.y, self.z}
-
-    def reset(self):
-        self.t = 0
 
 
 class Package:
