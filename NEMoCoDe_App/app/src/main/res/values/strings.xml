@@ -8,6 +8,8 @@
     <string name="cancel_add_device">Cancel</string>
     <string name="add_new_device">Fill in the information below to add new device</string>
     <string name="delete_device">Delete Device</string>
+    <string name="placeholder">placeholder</string>
+    <string name="no_text">Device #1</string>
 
     <string name="no_devices_connected">No devices are currently connected</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>

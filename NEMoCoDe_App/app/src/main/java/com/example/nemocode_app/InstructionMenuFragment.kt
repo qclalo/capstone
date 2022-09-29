@@ -5,10 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewDebug
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -28,8 +25,13 @@ class InstructionMenuFragment : Fragment() {
         val addDeviceConfirmBtn : Button = view.findViewById(R.id.add_device_confirm)
         addDeviceConfirmBtn.setOnClickListener {
             val deviceInfo = getDeviceInfo(view)
-            val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToOneDeviceFragment(deviceInfo)
-            findNavController().navigate(action)
+            if (checkValidInfoEntered(deviceInfo)) {
+                val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToOneDeviceFragment(deviceInfo)
+                findNavController().navigate(action)
+            } else {
+                val invalidInfoToast = Toast.makeText(context, "Error: Invalid device info entered", Toast.LENGTH_SHORT)
+                invalidInfoToast.show()
+            }
         }
 
         val cancelBtn : Button = view.findViewById(R.id.cancel_button)
@@ -58,5 +60,15 @@ class InstructionMenuFragment : Fragment() {
             }
         }
         return deviceInfoList.toTypedArray()
+    }
+
+    // Return false if any of the values in deviceInfo are empty
+    private fun checkValidInfoEntered(deviceInfo: Array<String>) : Boolean {
+        for (value in deviceInfo) {
+            if (value == "") {
+                return false
+            }
+        }
+        return true
     }
 }
