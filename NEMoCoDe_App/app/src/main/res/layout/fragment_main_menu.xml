@@ -7,10 +7,12 @@
     tools:context=".MainMenuFragment">
 
     <Button
+        android:backgroundTint="@color/mint"
         android:id="@+id/add_device_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add_device"
+        android:textColor="@color/space"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -19,6 +21,7 @@
         app:layout_constraintVertical_bias="0.134" />
 
     <TextView
+
         android:id="@+id/no_devices"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
