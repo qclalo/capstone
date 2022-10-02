@@ -1,0 +1,106 @@
+Index: app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <color name=\"purple_200\">#FFBB86FC</color>\r\n    <color name=\"purple_500\">#FF6200EE</color>\r\n    <color name=\"purple_700\">#FF3700B3</color>\r\n    <color name=\"teal_200\">#FF03DAC5</color>\r\n    <color name=\"teal_700\">#FF018786</color>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/values/colors.xml b/app/src/main/res/values/colors.xml
+--- a/app/src/main/res/values/colors.xml	(revision 4b862e59a8c8afdc2c757fbdb09bf039d47b81dc)
++++ b/app/src/main/res/values/colors.xml	(date 1664664262863)
+@@ -6,5 +6,10 @@
+     <color name="teal_200">#FF03DAC5</color>
+     <color name="teal_700">#FF018786</color>
+     <color name="black">#FF000000</color>
+-    <color name="white">#FFFFFFFF</color>
++    <color name="white">#FFFFFF</color>
++    <color name="space">#303633</color>
++    <color name="mint">#8BE8CB</color>
++    <color name="blue">#7EA2AA</color>
++    <color name="grey">#888DA7</color>
++    <color name="pink">#9C7A97</color>
+ </resources>
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_main_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".MainMenuFragment\">\r\n\r\n    <Button\r\n        android:id=\"@+id/add_device_main\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"@string/add_device\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.134\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/no_devices\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"@string/no_devices_connected\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/add_device_main\"\r\n        app:layout_constraintVertical_bias=\"0.328\" />\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_main_menu.xml b/app/src/main/res/layout/fragment_main_menu.xml
+--- a/app/src/main/res/layout/fragment_main_menu.xml	(revision 4b862e59a8c8afdc2c757fbdb09bf039d47b81dc)
++++ b/app/src/main/res/layout/fragment_main_menu.xml	(date 1664664262852)
+@@ -7,10 +7,12 @@
+     tools:context=".MainMenuFragment">
+ 
+     <Button
++        android:backgroundTint="@color/mint"
+         android:id="@+id/add_device_main"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="@string/add_device"
++        android:textColor="@color/space"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.498"
+@@ -19,6 +21,7 @@
+         app:layout_constraintVertical_bias="0.134" />
+ 
+     <TextView
++
+         android:id="@+id/no_devices"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+Index: app/src/main/res/layout/fragment_instruction_menu.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".InstructionMenuFragment\">\r\n\r\n    <Button\r\n        android:id=\"@+id/add_device_confirm\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"@string/add_device\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/cancel_button\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"1.0\" />\r\n\r\n    <Button\r\n        android:id=\"@+id/cancel_button\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"@string/cancel_add_device\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.498\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.91\" />\r\n\r\n    <com.google.android.material.textfield.TextInputEditText\r\n        android:id=\"@+id/userName\"\r\n        android:layout_width=\"298dp\"\r\n        android:layout_height=\"48dp\"\r\n        android:hint=\"@string/user_name\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/cancel_button\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.495\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/fill_in_info\"\r\n        app:layout_constraintVertical_bias=\"0.103\" />\r\n\r\n    <com.google.android.material.textfield.TextInputEditText\r\n        android:id=\"@+id/deviceID\"\r\n        android:layout_width=\"298dp\"\r\n        android:layout_height=\"48dp\"\r\n        android:hint=\"@string/device_id\"\r\n        android:inputType=\"number\"\r\n        app:layout_constraintBottom_toTopOf=\"@+id/cancel_button\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.495\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/userName\"\r\n        app:layout_constraintVertical_bias=\"0.05\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/fill_in_info\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"40dp\"\r\n        android:text=\"@string/add_new_device\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_instruction_menu.xml b/app/src/main/res/layout/fragment_instruction_menu.xml
+--- a/app/src/main/res/layout/fragment_instruction_menu.xml	(revision 4b862e59a8c8afdc2c757fbdb09bf039d47b81dc)
++++ b/app/src/main/res/layout/fragment_instruction_menu.xml	(date 1664664262857)
+@@ -4,21 +4,25 @@
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
++    android:background="@color/pink"
+     tools:context=".InstructionMenuFragment">
+ 
+     <Button
+         android:id="@+id/add_device_confirm"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:backgroundTint="@color/mint"
+         android:text="@string/add_device"
++        android:textColor="@color/space"
+         app:layout_constraintBottom_toTopOf="@+id/cancel_button"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.498"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="1.0" />
++        app:layout_constraintVertical_bias="0.952" />
+ 
+     <Button
++        android:backgroundTint="@color/blue"
++        android:textColor="@color/space"
+         android:id="@+id/cancel_button"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+@@ -56,11 +60,13 @@
+         app:layout_constraintVertical_bias="0.05" />
+ 
+     <TextView
++        android:textColor="@color/space"
+         android:id="@+id/fill_in_info"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="40dp"
+         android:text="@string/add_new_device"
++        android:textSize="18dp"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
