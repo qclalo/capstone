@@ -1,5 +1,10 @@
 from abc import abstractmethod
 
+"""
+Intended to function as a global constant that indicates a concussion has occurred once this value is surpassed.
+Until we better understand the data format of the accelerometers then this will be a dummy number.
+"""
+ACCEL_THRESHOLD = 90
 
 class AccelerometerPacket:
     def __init__(self, id: int, x: float, y: float, z: float):
@@ -85,7 +90,7 @@ class ControllerInterface:
         pass
 
     @abstractmethod
-    def check_queue_for_concussion(self) -> bool:
+    def check_package_for_concussion(self, package: Package) -> bool:
         """
         Algorithmic checking of queue for potential concussive impact above threshold limit
         :returns true or false indicating if a concussive event has occurred
@@ -134,11 +139,12 @@ class ControllerInterface:
 
 class Controller(ControllerInterface):
 
-    def __init__(self, time: int, queue, queueIndex: int, queueLen: int):
+    def __init__(self, time: int, queue, queueIndex: int, queueLen: int, accel_ports):
         self.time = 0
         self.queue = []
         self.queueIndex = 0
         self.queueLen = 100000
+        self.accel_ports = []
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         pass
@@ -162,10 +168,22 @@ class Controller(ControllerInterface):
         pass
 
     def run_data_collection_loop(self):
-        pass
+        packets = []
+        for index in self.accel_ports:
+            packet = self.get_accelerometer_packet(index)
+            packets.append(packet)
+        package = self.assemble_package(packets)
+        self.add_package_to_queue(package)
+        if(self.check_package_for_concussion(package)):
+            data = self.create_impact_data()
+            self.alert_user(data)
 
-    def check_queue_for_concussion(self) -> bool:
-        pass
+    def check_package_for_concussion(self, package: Package) -> bool:
+        for pack in package.packs:
+            for val in pack.get_accel_data():
+                if (val >= ACCEL_THRESHOLD):
+                    return True
+        return False
 
     def create_impact_data(self) -> ImpactData:
         pass
