@@ -37,8 +37,8 @@
 
     <Button
         android:id="@+id/device_button1"
-        android:layout_width="357dp"
-        android:layout_height="309dp"
+        android:layout_width="357sp"
+        android:layout_height="309sp"
         android:backgroundTint="@color/button_color"
         android:text="@string/no_text"
         android:textColor="@color/button_color"
@@ -60,21 +60,24 @@
         app:layout_constraintBottom_toTopOf="@+id/severity_icon1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.995" />
 
     <TextView
         android:id="@+id/deviceid_text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         android:elevation="8dp"
         android:text="@string/placeholder"
         android:textAllCaps="true"
         android:textColor="@color/text_color"
-        app:layout_constraintBottom_toBottomOf="@+id/device_button1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/username_text1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/username_text1"
+        app:layout_constraintTop_toTopOf="@+id/severity_text1"
+        app:layout_constraintVertical_bias="0.435" />
 
     <ImageView
         android:id="@+id/severity_icon1"
@@ -97,8 +100,8 @@
         android:textAllCaps="true"
         android:textColor="@color/text_color"
         app:layout_constraintBottom_toTopOf="@+id/severity_icon1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/username_text1"
+        app:layout_constraintStart_toStartOf="@+id/username_text1"
         app:layout_constraintTop_toBottomOf="@+id/username_text1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

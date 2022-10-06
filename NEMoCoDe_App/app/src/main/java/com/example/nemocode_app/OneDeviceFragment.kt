@@ -52,10 +52,8 @@ class OneDeviceFragment : Fragment() {
         for (i in 0..this.devices.size) {
             this.userNameTextViews[userNameTextKey + (i + 1)]?.text = this.devices[i].userName
             this.deviceIdTextViews[deviceIdTextKey + (i + 1)]?.text = this.devices[i].deviceId.toString()
-            this.severityTextViews[severityTextKey + (i + 1)]?.text = this.devices[i].getSeverityText()
 
             val severityTextView: TextView? = this.severityTextViews[severityTextKey + (i + 1)]
-            severityTextView?.text = this.devices[i].getSeverityText()
             val severityIcon : ImageView? = this.severityIcons[severityIconKey + (i + 1)]
             setSeverity(severityTextView, severityIcon, i)
 
@@ -65,7 +63,7 @@ class OneDeviceFragment : Fragment() {
                 setSeverity(severityTextView, severityIcon, i)
             }
         }
-        
+
         val deleteDeviceBtn : Button = view.findViewById(R.id.delete_device)
         deleteDeviceBtn.setOnClickListener {
             val viewModel = (activity as MainActivity).deviceFragmentViewModel
