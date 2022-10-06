@@ -118,12 +118,13 @@
             android:id="@+id/device_button_two"
             android:layout_width="200dp"
             android:layout_height="150dp"
+            android:layout_marginTop="9dp"
             android:backgroundTint="@color/button_color"
             android:text="@string/no_text"
             android:textColor="@color/button_color"
-            app:strokeColor="@color/purple_500"
-            tools:layout_editor_absoluteX="211dp"
-            tools:layout_editor_absoluteY="9dp" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeColor="@color/purple_500" />
 
         <ImageView
             android:id="@+id/severity_icon_two"
