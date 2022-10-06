@@ -1,6 +1,7 @@
 package com.example.nemocode_app
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewDebug
@@ -16,11 +17,13 @@ import com.google.android.material.textfield.TextInputEditText
 class InstructionMenuFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_instruction_menu, container, false)
+        Log.i("Lifecycle", "In onCreateView in InstructionMenuFragment")
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.i("Lifecycle", "In onViewCreated in InstructionMenuFragment")
 
         val addDeviceConfirmBtn : Button = view.findViewById(R.id.add_device_confirm)
         addDeviceConfirmBtn.setOnClickListener {
