@@ -118,20 +118,19 @@
             android:id="@+id/device_button_two"
             android:layout_width="200dp"
             android:layout_height="150dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
             android:backgroundTint="@color/button_color"
             android:text="@string/no_text"
             android:textColor="@color/button_color"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:strokeColor="@color/purple_500" />
+            app:strokeColor="@color/purple_500"
+            tools:layout_editor_absoluteX="211dp"
+            tools:layout_editor_absoluteY="9dp" />
 
         <ImageView
             android:id="@+id/severity_icon_two"
             android:layout_width="200dp"
             android:layout_height="100dp"
             android:layout_marginTop="34dp"
+            android:layout_marginEnd="4dp"
             android:elevation="8dp"
             android:src="@drawable/ic_healthy_severity"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,6 +142,7 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:elevation="8dp"
             android:gravity="center"
             android:text="@string/placeholder"
@@ -269,7 +269,6 @@
             app:layout_constraintHorizontal_bias="0.981"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.571"
             app:strokeColor="@color/purple_500" />
 
         <ImageView
