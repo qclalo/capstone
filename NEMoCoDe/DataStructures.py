@@ -85,7 +85,7 @@ class Controller:
 
     def add_package_to_queue(self, pack: Package):
         """
-        Adds a Package to the front of the queue and removes the oldest Package from the rear of the queue
+        Adds a Package to the front of the queue and removes the oldest Package from the rear of the queue, if the queue is full.
         :param Package pack: the Package object to be added to the queue
         """
         self.queue.appendleft(pack)
