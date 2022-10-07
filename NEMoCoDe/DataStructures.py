@@ -12,6 +12,7 @@ class Severity(Enum):
     An enum representing different severity scores.
     These severity scores are included within each ImpactData
     """
+    UNSET = 0
     LOW = 1
     MEDIUM = 2
     HIGH = 3
