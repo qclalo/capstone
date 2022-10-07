@@ -32,7 +32,7 @@ class ImpactData:
 
 class Controller:
 
-    def __init__(self, time: int, queue, queueLen: int, accel_ports):
+    def __init__(self, time: int, queue: deque, accel_ports):
         self.time = 0
         self.queue = deque([], maxlen = 10000)
         self.accel_ports = []
