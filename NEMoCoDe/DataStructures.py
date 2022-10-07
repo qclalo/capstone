@@ -1,18 +1,22 @@
 from collections import deque
 from enum import Enum
+from math import sqrt
 
 """
 Intended to function as a global constant that indicates a concussion has occurred once this value is surpassed.
 Until we better understand the data format of the accelerometers then this will be a dummy number.
 """
-ACCEL_THRESHOLD = 90
+ACCEL_THRESHOLD_LOW = 30
+ACCEL_THRESHOLD_MEDIUM = 60
+ACCEL_THRESHOLD_HIGH = 90
 
 class Severity(Enum):
     """
     An enum representing different severity scores.
     These severity scores are included within each ImpactData
     """
-    UNSET = 0
+    UNSET = -1
+    MINIMAL = 0
     LOW = 1
     MEDIUM = 2
     HIGH = 3
@@ -55,6 +59,21 @@ class Controller:
         returns A packet representing x - y - z acceleration at a moment in time
         """
         pass
+
+    def calculate_vector_length(self, x: float, y: float, z: float):
+        return sqrt((x ** 2) + (y ** 2) + (z ** 2))
+
+    def check_packet_for_concussive_event(self, packet: AccelerometerPacket) -> Severity:
+        accel_magnitude = self.calculate_vector_length(packet.x, packet.y, packet.z)
+        if (accel_magnitude >= ACCEL_THRESHOLD_HIGH):
+            return Severity.HIGH
+        elif (accel_magnitude >= ACCEL_THRESHOLD_MEDIUM):
+            return Severity.MEDIUM
+        elif (accel_magnitude >= ACCEL_THRESHOLD_LOW):
+            return Severity.LOW
+        else:
+            return Severity.MINIMAL
+
 
     def assemble_package(self, packets) -> Package:
         """
