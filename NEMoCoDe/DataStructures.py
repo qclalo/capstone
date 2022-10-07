@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from collections import deque
 
 """
 Intended to function as a global constant that indicates a concussion has occurred once this value is surpassed.
@@ -44,11 +44,9 @@ class ImpactData:
 
 class Controller:
 
-    def __init__(self, time: int, queue, queueIndex: int, queueLen: int, accel_ports):
+    def __init__(self, time: int, queue, queueLen: int, accel_ports):
         self.time = 0
-        self.queue = []
-        self.queueIndex = 0
-        self.queueLen = 100000
+        self.queue = deque([], maxlen = 10000)
         self.accel_ports = []
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
@@ -69,14 +67,10 @@ class Controller:
 
     def add_package_to_queue(self, pack: Package):
         """
-        Adds a Package to the front of the queue and removes the oldest Package from the queue
+        Adds a Package to the front of the queue and removes the oldest Package from the rear of the queue
         :param Package pack: the Package object to be added to the queue
         """
-        self.queue[self.queueIndex] = pack
-        if(self.queueIndex == self.queueLen - 1):
-            self.queueIndex = 0
-        else:
-            self.queueIndex = self.queueIndex + 1
+        self.queue.appendleft(pack)
 
     def initialize_connection(self, accel_port: int, id: int) -> AccelerometerPacket:
         """
