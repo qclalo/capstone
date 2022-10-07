@@ -1,10 +1,20 @@
 from collections import deque
+from enum import Enum
 
 """
 Intended to function as a global constant that indicates a concussion has occurred once this value is surpassed.
 Until we better understand the data format of the accelerometers then this will be a dummy number.
 """
 ACCEL_THRESHOLD = 90
+
+class Severity(Enum):
+    """
+    An enum representing different severity scores.
+    These severity scores are included within each ImpactData
+    """
+    LOW = 1
+    MEDIUM = 2
+    HIGH = 3
 
 class AccelerometerPacket:
     def __init__(self, id: int, x: float, y: float, z: float):
