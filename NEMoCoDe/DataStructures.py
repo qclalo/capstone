@@ -35,7 +35,7 @@ class Package:
 
 
 class ImpactData:
-    def __init__(self, severity, data):
+    def __init__(self, severity: Severity, data: deque):
         self.severity = severity
         self.data = data
 
