@@ -1,6 +1,8 @@
 from collections import deque
 from enum import Enum
 from math import sqrt
+import board
+import adafruit_adxl37x
 
 """
 Intended to function as a global constant that indicates a concussion has occurred once this value is surpassed.
@@ -47,7 +49,7 @@ class ImpactData:
 
 class Controller:
 
-    def __init__(self, time: int, queue: deque, accel_ports):
+    def __init__(self):
         self.time = 0
         self.queue = deque([], maxlen = 10000)
         self.accel_ports = []
@@ -58,7 +60,10 @@ class Controller:
         :param str id: The id of the accelerometer to pull data from
         returns A packet representing x - y - z acceleration at a moment in time
         """
-        pass
+        data = self.accel_ports[id].acceleration
+        accel_packet = AccelerometerPacket(id, data[0], data[1], data[2])
+        return accel_packet
+
 
     def calculate_vector_length(self, x: float, y: float, z: float):
         return sqrt((x ** 2) + (y ** 2) + (z ** 2))
@@ -90,14 +95,20 @@ class Controller:
         """
         self.queue.appendleft(pack)
 
-    def initialize_connection(self, accel_port: int, id: int) -> AccelerometerPacket:
+    def initialize_connection(self, accel_port: int, id: int):
         """
-        :param SerialID accel_port: serial id of the specific accelerometer being connected to
+        :param SerialID accel_port: i2c address specific accelerometer being connected to
         :param str id: ID to set for the accelerometer
         :raises An error if the connection has failed to initialize
         :returns an accelerometer object representing the accelerometer connected to
         """
-        pass
+        try:
+            i2c = board.I2C()
+            accelerometer = adafruit_adxl37x.ADXL375(i2c, accel_port)
+        except: 
+            raise Exception(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
+        self.accel_ports.append(accelerometer)
+        return accelerometer
 
     def run_data_collection_loop(self):
         """
