@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.view.get
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -33,10 +35,11 @@ class OneDeviceFragment : Fragment() {
             addDevice(viewModel)
         }
 
-        val view = if (this.devices.size == 2) {
-            inflater.inflate(R.layout.fragment_two_device, container, false)
-        } else {
-            inflater.inflate(R.layout.fragment_one_device, container, false)
+        val view = when (this.devices.size) {
+            1 -> inflater.inflate(R.layout.fragment_one_device, container, false)
+            2 -> inflater.inflate(R.layout.fragment_two_device, container, false)
+            3 -> inflater.inflate(R.layout.fragment_three_device, container, false)
+            else -> inflater.inflate(R.layout.fragment_one_device, container, false)
         }
         return view
     }
@@ -103,34 +106,45 @@ class OneDeviceFragment : Fragment() {
     private fun initElementLists() {
         val vg : ViewGroup = requireView() as ViewGroup
         for (i in 0..vg.childCount) {
-            if (vg.getChildAt(i) is Button) {
-                val currButton : Button = vg.getChildAt(i) as Button
-                val name : String = requireView().resources.getResourceName(currButton.id).split("/")[1]
-                if (name.contains("device_button")) {
-                    this.deviceButtons[name] = currButton
-                    Log.i("Init", "Added Button=$name to deviceButtons")
+            if (vg.getChildAt(i) is androidx.constraintlayout.widget.ConstraintLayout) {
+                val cvg : ViewGroup = vg.getChildAt(i) as ViewGroup
+                for (j in 0..cvg.childCount) {
+                    insertIntoGroup(cvg, j)
                 }
-            } else if (vg.getChildAt(i) is TextView) {
-                val currTextView : TextView = vg.getChildAt(i) as TextView
-                val name : String = requireView().resources.getResourceName(currTextView.id).split("/")[1]
-                if (name.contains("username_text")) {
-                    this.userNameTextViews[name] = currTextView
-                    Log.i("Init", "Added TextView = $name to userNameTextViews")
-                } else if (name.contains("deviceid_text")) {
-                    this.deviceIdTextViews[name] = currTextView
-                    Log.i("Init", "Added TextView = $name to deviceIdTextViews")
-                } else if (name.contains("severity_text")) {
-                    this.severityTextViews[name] = currTextView
-                    Log.i("Init", "Added TextView = $name to severityTextViews")
-                } else {
-                    Log.i("Error", "Couldn't find associated text view to id = $name")
-                }
-            } else if (vg.getChildAt(i) is ImageView) {
-                val currIcon : ImageView = vg.getChildAt(i) as ImageView
-                val name : String = requireView().resources.getResourceName(currIcon.id).split("/")[1]
-                this.severityIcons[name] = currIcon
-                Log.i("Init", "Added ImageView=$name to severityIcons")
+            } else {
+                insertIntoGroup(vg, i)
             }
+        }
+    }
+
+    private fun insertIntoGroup(vg : ViewGroup, i : Int) {
+        if (vg.getChildAt(i) is Button) {
+            val currButton : Button = vg.getChildAt(i) as Button
+            val name : String = requireView().resources.getResourceName(currButton.id).split("/")[1]
+            if (name.contains("device_button")) {
+                this.deviceButtons[name] = currButton
+                Log.i("Init", "Added Button=$name to deviceButtons")
+            }
+        } else if (vg.getChildAt(i) is TextView) {
+            val currTextView : TextView = vg.getChildAt(i) as TextView
+            val name : String = requireView().resources.getResourceName(currTextView.id).split("/")[1]
+            if (name.contains("username_text")) {
+                this.userNameTextViews[name] = currTextView
+                Log.i("Init", "Added TextView = $name to userNameTextViews")
+            } else if (name.contains("deviceid_text")) {
+                this.deviceIdTextViews[name] = currTextView
+                Log.i("Init", "Added TextView = $name to deviceIdTextViews")
+            } else if (name.contains("severity_text")) {
+                this.severityTextViews[name] = currTextView
+                Log.i("Init", "Added TextView = $name to severityTextViews")
+            } else {
+                Log.i("Error", "Couldn't find associated text view to id = $name")
+            }
+        } else if (vg.getChildAt(i) is ImageView) {
+            val currIcon : ImageView = vg.getChildAt(i) as ImageView
+            val name : String = requireView().resources.getResourceName(currIcon.id).split("/")[1]
+            this.severityIcons[name] = currIcon
+            Log.i("Init", "Added ImageView=$name to severityIcons")
         }
     }
 

@@ -72,12 +72,12 @@
         android:text="@string/placeholder"
         android:textAllCaps="true"
         android:textColor="@color/text_color"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/device_button1"
         app:layout_constraintEnd_toEndOf="@+id/username_text1"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/username_text1"
         app:layout_constraintTop_toTopOf="@+id/severity_text1"
-        app:layout_constraintVertical_bias="0.435" />
+        app:layout_constraintVertical_bias="0.921" />
 
     <ImageView
         android:id="@+id/severity_icon1"
