@@ -23,7 +23,7 @@
         app:layout_constraintVertical_bias="0.898" />
 
     <Button
-        android:id="@+id/add_device_one"
+        android:id="@+id/add_device"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/button_color"
@@ -36,7 +36,7 @@
         app:layout_constraintVertical_bias="0.118" />
 
     <Button
-        android:id="@+id/device_button1"
+        android:id="@+id/device_button_1"
         android:layout_width="357sp"
         android:layout_height="309sp"
         android:backgroundTint="@color/button_color"
@@ -49,7 +49,7 @@
         app:strokeColor="@color/purple_500" />
 
     <TextView
-        android:id="@+id/username_text1"
+        android:id="@+id/username_text_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -57,7 +57,7 @@
         android:text="@string/placeholder"
         android:textAllCaps="true"
         android:textColor="@color/text_color"
-        app:layout_constraintBottom_toTopOf="@+id/severity_icon1"
+        app:layout_constraintBottom_toTopOf="@+id/severity_icon_1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,22 +65,22 @@
         app:layout_constraintVertical_bias="0.995" />
 
     <TextView
-        android:id="@+id/deviceid_text1"
+        android:id="@+id/deviceid_text_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="8dp"
         android:text="@string/placeholder"
         android:textAllCaps="true"
         android:textColor="@color/text_color"
-        app:layout_constraintBottom_toBottomOf="@+id/device_button1"
-        app:layout_constraintEnd_toEndOf="@+id/username_text1"
+        app:layout_constraintBottom_toBottomOf="@+id/device_button_1"
+        app:layout_constraintEnd_toEndOf="@+id/username_text_1"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/username_text1"
-        app:layout_constraintTop_toTopOf="@+id/severity_text1"
+        app:layout_constraintStart_toStartOf="@+id/username_text_1"
+        app:layout_constraintTop_toTopOf="@+id/severity_text_1"
         app:layout_constraintVertical_bias="0.921" />
 
     <ImageView
-        android:id="@+id/severity_icon1"
+        android:id="@+id/severity_icon_1"
         android:layout_width="224dp"
         android:layout_height="196dp"
         android:elevation="8dp"
@@ -92,16 +92,16 @@
         app:tint="@color/healthy_icon_color" />
 
     <TextView
-        android:id="@+id/severity_text1"
+        android:id="@+id/severity_text_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="8dp"
         android:text="@string/placeholder"
         android:textAllCaps="true"
         android:textColor="@color/text_color"
-        app:layout_constraintBottom_toTopOf="@+id/severity_icon1"
-        app:layout_constraintEnd_toEndOf="@+id/username_text1"
-        app:layout_constraintStart_toStartOf="@+id/username_text1"
-        app:layout_constraintTop_toBottomOf="@+id/username_text1" />
+        app:layout_constraintBottom_toTopOf="@+id/severity_icon_1"
+        app:layout_constraintEnd_toEndOf="@+id/username_text_1"
+        app:layout_constraintStart_toStartOf="@+id/username_text_1"
+        app:layout_constraintTop_toBottomOf="@+id/username_text_1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

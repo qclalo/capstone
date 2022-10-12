@@ -1,7 +1,6 @@
 package com.example.nemocode_app
 
 import android.content.res.ColorStateList
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,8 +9,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.get
 import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
@@ -39,6 +36,9 @@ class OneDeviceFragment : Fragment() {
             1 -> inflater.inflate(R.layout.fragment_one_device, container, false)
             2 -> inflater.inflate(R.layout.fragment_two_device, container, false)
             3 -> inflater.inflate(R.layout.fragment_three_device, container, false)
+            4 -> inflater.inflate(R.layout.fragment_four_device, container, false)
+            5 -> inflater.inflate(R.layout.fragment_five_device, container, false)
+            6 -> inflater.inflate(R.layout.fragment_six_device, container, false)
             else -> inflater.inflate(R.layout.fragment_one_device, container, false)
         }
         return view
@@ -47,11 +47,11 @@ class OneDeviceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initElementLists()
-        val deviceIdTextKey = "deviceid_text"
-        val userNameTextKey = "username_text"
-        val severityTextKey = "severity_text"
-        val severityIconKey = "severity_icon"
-        val deviceButtonKey = "device_button"
+        val deviceIdTextKey = "deviceid_text_"
+        val userNameTextKey = "username_text_"
+        val severityTextKey = "severity_text_"
+        val severityIconKey = "severity_icon_"
+        val deviceButtonKey = "device_button_"
         for (i in 0..this.devices.size) {
             this.userNameTextViews[userNameTextKey + (i + 1)]?.text = this.devices[i].userName
             this.deviceIdTextViews[deviceIdTextKey + (i + 1)]?.text = this.devices[i].deviceId.toString()
@@ -79,7 +79,7 @@ class OneDeviceFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        val addDeviceBtn : Button = view.findViewById(R.id.add_device_one)
+        val addDeviceBtn : Button = view.findViewById(R.id.add_device)
         addDeviceBtn.setOnClickListener {
             val action = OneDeviceFragmentDirections.actionOneDeviceFragmentToInstructionMenuFragment("OneDevice")
             view.findNavController().navigate(action)
