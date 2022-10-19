@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 
-class OneDeviceFragment : Fragment() {
+class DeviceInfoFragment : Fragment() {
 
     private var userNameTextViews : MutableMap<String, TextView> = mutableMapOf()
     private var deviceIdTextViews : MutableMap<String, TextView> = mutableMapOf()
@@ -65,31 +65,12 @@ class OneDeviceFragment : Fragment() {
                 cycleSeverities(i)
                 setSeverity(severityTextView, severityIcon, i)
             }
-        }
 
-        val deviceInfoButton : Button = view.findViewById(R.id.device_button_1)
-        deviceInfoButton.setOnClickListener {
-            val viewModel = (activity as MainActivity).deviceFragmentViewModel
-            val action = OneDeviceFragmentDirections.actionOneDeviceFragmentToDeviceInfoFragment()
-            findNavController().navigate(action)
-        }
-
-        val deleteDeviceBtn : Button = view.findViewById(R.id.delete_device)
-        deleteDeviceBtn.setOnClickListener {
-            val viewModel = (activity as MainActivity).deviceFragmentViewModel
-            viewModel.devices.removeLast()
-            val action = if (viewModel.devices.isEmpty()) {
-                OneDeviceFragmentDirections.actionOneDeviceFragmentToMainMenuFragment()
-            } else {
-                OneDeviceFragmentDirections.actionOneDeviceFragmentSelf()
+            val BackToMenu : Button = view.findViewById(R.id.back_to_menu)
+            BackToMenu.setOnClickListener {
+                val action = DeviceInfoFragmentDirections.actionDeviceInfoFragmentToOneDeviceFragment()
+                view.findNavController().navigate(action)
             }
-            findNavController().navigate(action)
-        }
-
-        val addDeviceBtn : Button = view.findViewById(R.id.add_device)
-        addDeviceBtn.setOnClickListener {
-            val action = OneDeviceFragmentDirections.actionOneDeviceFragmentToInstructionMenuFragment("OneDevice")
-            view.findNavController().navigate(action)
         }
     }
 
@@ -195,6 +176,6 @@ class OneDeviceFragment : Fragment() {
             Severity.HIGH_RISK -> this.devices[deviceIndex].severity = Severity.HEALTHY
         }
     }
-
-
 }
+
+

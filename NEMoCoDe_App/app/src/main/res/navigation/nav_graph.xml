@@ -54,5 +54,16 @@
         <action
             android:id="@+id/action_oneDeviceFragment_self"
             app:destination="@id/oneDeviceFragment" />
+        <action
+            android:id="@+id/action_oneDeviceFragment_to_deviceInfoFragment"
+            app:destination="@id/deviceInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deviceInfoFragment"
+        android:name="com.example.nemocode_app.DeviceInfoFragment"
+        android:label="DeviceInfoFragment" >
+        <action
+            android:id="@+id/action_deviceInfoFragment_to_oneDeviceFragment"
+            app:destination="@id/oneDeviceFragment" />
     </fragment>
 </navigation>
