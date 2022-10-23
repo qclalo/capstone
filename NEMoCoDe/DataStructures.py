@@ -29,6 +29,7 @@ class AccelerometerPacket:
         self.x = x
         self.y = y
         self.z = z
+        self.severity_rating = Severity.UNSET
 
     def get_accel_data(self):
         return {self.x, self.y, self.z}
@@ -39,6 +40,7 @@ class Package:
         # packs: AccelerometerPacket[]
         self.t = t
         self.packs = packs
+        self.severity_rating = max([pack.severity_rating for pack in packs])
 
 
 class ImpactData:
@@ -68,16 +70,16 @@ class Controller:
     def calculate_vector_length(self, x: float, y: float, z: float):
         return sqrt((x ** 2) + (y ** 2) + (z ** 2))
 
-    def check_packet_for_concussive_event(self, packet: AccelerometerPacket) -> Severity:
+    def assign_packet_severity(self, packet: AccelerometerPacket):
         accel_magnitude = self.calculate_vector_length(packet.x, packet.y, packet.z)
         if (accel_magnitude >= ACCEL_THRESHOLD_HIGH):
-            return Severity.HIGH
+            packet.severity_rating = Severity.HIGH
         elif (accel_magnitude >= ACCEL_THRESHOLD_MEDIUM):
-            return Severity.MEDIUM
+            packet.severity_rating = Severity.MEDIUM
         elif (accel_magnitude >= ACCEL_THRESHOLD_LOW):
-            return Severity.LOW
+            packet.severity_rating = Severity.LOW
         else:
-            return Severity.MINIMAL
+            packet.severity_rating = Severity.MINIMAL
 
 
     def assemble_package(self, packets) -> Package:
@@ -93,7 +95,7 @@ class Controller:
         Adds a Package to the front of the queue and removes the oldest Package from the rear of the queue, if the queue is full.
         :param Package pack: the Package object to be added to the queue
         """
-        self.queue.appendleft(pack)
+        self.queue.append(pack)
 
     def initialize_connection(self, accel_port: int, id: int):
         """
@@ -120,30 +122,23 @@ class Controller:
         packets = []
         for index in self.accel_ports:
             packet = self.get_accelerometer_packet(index)
+            self.assign_packet_severity(packet)
             packets.append(packet)
         package = self.assemble_package(packets)
         self.add_package_to_queue(package)
-        if(self.check_package_for_concussion(package)):
+        if(package.severity_rating >= Severity.MEDIUM):
             data = self.create_impact_data()
             self.alert_user(data)
-
-    def check_package_for_concussion(self, package: Package) -> bool:
-        """
-        Algorithmic checking of queue for potential concussive impact above threshold limit
-        :returns true or false indicating if a concussive event has occurred
-        """
-        for pack in package.packs:
-            for val in pack.get_accel_data():
-                if (val >= ACCEL_THRESHOLD):
-                    return True
-        return False
 
     def create_impact_data(self) -> ImpactData:
         """
         Create an ImpactData object from the current queue data
         This object will contain critical information that the client controller needs to visualize the data
         """
-        pass
+        last_element_in_queue = self.queue.pop()
+        severity_rating = last_element_in_queue.severity_rating
+        self.queue.append(last_element_in_queue)
+        return ImpactData(severity_rating, self.queue)
 
     def alert_user(self, report: ImpactData):
         """
