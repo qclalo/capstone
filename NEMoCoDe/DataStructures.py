@@ -12,6 +12,7 @@ ACCEL_THRESHOLD_LOW = 30
 ACCEL_THRESHOLD_MEDIUM = 60
 ACCEL_THRESHOLD_HIGH = 90
 
+
 class Severity(Enum):
     """
     An enum representing different severity scores.
@@ -22,6 +23,7 @@ class Severity(Enum):
     LOW = 1
     MEDIUM = 2
     HIGH = 3
+
 
 class AccelerometerPacket:
     def __init__(self, id: int, x: float, y: float, z: float):
@@ -53,8 +55,8 @@ class Controller:
 
     def __init__(self):
         self.time = 0
-        self.queue = deque([], maxlen = 10000)
-        self.accel_ports = []
+        self.queue = deque([], maxlen=10)
+        self.accel_ports = {}
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         """
@@ -65,7 +67,6 @@ class Controller:
         data = self.accel_ports[id].acceleration
         accel_packet = AccelerometerPacket(id, data[0], data[1], data[2])
         return accel_packet
-
 
     def calculate_vector_length(self, x: float, y: float, z: float):
         return sqrt((x ** 2) + (y ** 2) + (z ** 2))
@@ -81,13 +82,12 @@ class Controller:
         else:
             packet.severity_rating = Severity.MINIMAL
 
-
     def assemble_package(self, packets) -> Package:
         """
         :param Packet[] packets: a group of packets representing a single data collection moment
         :returns A Package created from an array of Packets with synchronized timings
         """
-        packets.sort(key = packets.id)
+        packets.sort(key=lambda x: x.id)
         return Package(self.time, packets)
 
     def add_package_to_queue(self, pack: Package):
@@ -107,9 +107,9 @@ class Controller:
         try:
             i2c = board.I2C()
             accelerometer = adafruit_adxl37x.ADXL375(i2c, accel_port)
-        except: 
+        except:
             raise Exception(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
-        self.accel_ports.append(accelerometer)
+        self.accel_ports[id] = accelerometer
         return accelerometer
 
     def run_data_collection_loop(self):
@@ -126,9 +126,10 @@ class Controller:
             packets.append(packet)
         package = self.assemble_package(packets)
         self.add_package_to_queue(package)
-        if(package.severity_rating >= Severity.MEDIUM):
+        if (package.severity_rating == Severity.HIGH):
             data = self.create_impact_data()
             self.alert_user(data)
+        self.time += 1
 
     def create_impact_data(self) -> ImpactData:
         """
