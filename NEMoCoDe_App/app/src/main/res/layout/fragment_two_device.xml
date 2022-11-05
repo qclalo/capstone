@@ -163,7 +163,6 @@
         android:textColor="@color/text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/username_text_1"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/username_text_1"
         app:layout_constraintTop_toBottomOf="@+id/username_text_1"
         app:layout_constraintVertical_bias="0.009" />

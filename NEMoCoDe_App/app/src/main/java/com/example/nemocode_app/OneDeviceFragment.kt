@@ -62,17 +62,19 @@ class OneDeviceFragment : Fragment() {
 
             val deviceBtn : Button? = this.deviceButtons[deviceButtonKey + (i + 1)]
             deviceBtn?.setOnClickListener {
-                cycleSeverities(i)
-                setSeverity(severityTextView, severityIcon, i)
+//                cycleSeverities(i)
+//                setSeverity(severityTextView, severityIcon, i)
+                val action = OneDeviceFragmentDirections.actionOneDeviceFragmentToDeviceInfoFragment(i)
+                findNavController().navigate(action)
             }
         }
 
-        val deviceInfoButton : Button = view.findViewById(R.id.device_button_1)
-        deviceInfoButton.setOnClickListener {
-            val viewModel = (activity as MainActivity).deviceFragmentViewModel
-            val action = OneDeviceFragmentDirections.actionOneDeviceFragmentToDeviceInfoFragment()
-            findNavController().navigate(action)
-        }
+//        val deviceInfoButton : Button = view.findViewById(R.id.device_button_1)
+//        deviceInfoButton.setOnClickListener {
+//            val viewModel = (activity as MainActivity).deviceFragmentViewModel
+//            val action = OneDeviceFragmentDirections.actionOneDeviceFragmentToDeviceInfoFragment()
+//            findNavController().navigate(action)
+//        }
 
         val deleteDeviceBtn : Button = view.findViewById(R.id.delete_device)
         deleteDeviceBtn.setOnClickListener {

@@ -1,5 +1,15 @@
 package com.example.nemocode_app
 
+import android.Manifest
+import android.Manifest.permission.BLUETOOTH_CONNECT
+import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,6 +17,12 @@ import android.view.View
 import android.view.ViewDebug
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.annotation.RequiresPermission
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -74,16 +90,39 @@ class InstructionMenuFragment : Fragment() {
         }
         return true
     }
-    
-    // BLUETOOTH:
-    val bluetoothManager: BluetoothManager = getSystemService(BluetoothManager::class.java)
-    val bluetoothAdapter: BluetoothAdapter? = bluetoothManager.getAdapter()
-    if (bluetoothAdapter == null) {
-        // Device doesn't support Bluetooth
+
+    private fun getBluetoothPermissions(): BluetoothAdapter? {
+        // BLUETOOTH:
+        val context : Context = requireContext()
+        val bluetoothManager: BluetoothManager? = getSystemService(context, BluetoothManager::class.java)
+        val bluetoothAdapter: BluetoothAdapter? = bluetoothManager?.adapter
+        if (bluetoothAdapter == null) {
+            Log.i("Error", "Device does not support bluetooth")
+            return null
+        }
+        if (!bluetoothAdapter.isEnabled) {
+            val getResult = registerForActivityResult(
+                ActivityResultContracts.StartActivityForResult()) {
+                if(it.resultCode == Activity.RESULT_OK){
+                    val value = it.data?.getStringExtra("input")
+                }
+            }
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            getResult.launch(enableBtIntent)
+        }
+        return bluetoothAdapter
     }
 
-    if (bluetoothAdapter?.isEnabled == false) {
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-        startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+    @RequiresApi(Build.VERSION_CODES.S)
+    @RequiresPermission(BLUETOOTH_CONNECT)
+    private fun connectBluetoothDevice(bluetoothAdapter : BluetoothAdapter) : Set<BluetoothDevice>? {
+        val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter.bondedDevices
+        pairedDevices?.forEach { device ->
+            val deviceName = device.name
+            val deviceHardwareAddress = device.address // MAC address
+            Log.i("Bluetooth", "Connected to $deviceName with address $deviceHardwareAddress")
+        }
+
+        return pairedDevices
     }
 }

@@ -7,22 +7,6 @@
     android:background="@color/app_background"
     tools:context=".OneDeviceFragment">
 
-
-    <!--        android:layout_width="wrap_content"-->
-    <!--    <Button-->
-    <!--        android:id="@+id/device_button_1"-->
-    <!--        android:layout_width="357sp"-->
-    <!--        android:layout_height="309sp"-->
-    <!--        android:backgroundTint="@color/button_color"-->
-    <!--        android:text="@string/no_text"-->
-    <!--        android:textColor="@color/button_color"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="0.608"-->
-    <!--        app:strokeColor="@color/purple_500" />-->
-
     <Button
         android:id="@+id/back_to_menu"
         android:layout_width="wrap_content"
@@ -38,67 +22,49 @@
 
     <TextView
         android:id="@+id/user_information"
-        android:layout_width="400dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="731dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:elevation="8dp"
         android:text="@string/placeholder"
         android:textAllCaps="true"
         android:textColor="@color/text_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.454"
+        app:layout_constraintHorizontal_bias="0.504"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.236" />
-
-    <!--    <ImageView-->
-    <!--        android:id="@+id/severity_icon_1"-->
-    <!--        android:layout_width="224dp"-->
-    <!--        android:layout_height="196dp"-->
-    <!--        android:elevation="8dp"-->
-    <!--        android:src="@drawable/ic_healthy_severity"-->
-    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.497"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toTopOf="parent"-->
-    <!--        app:layout_constraintVertical_bias="0.591"-->
-    <!--        app:tint="@color/healthy_icon_color" />-->
+        app:layout_constraintVertical_bias="0.063" />
 
     <TextView
-        android:id="@+id/deviceid_text_1"
-        android:layout_width="400dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="140dp"
-        android:layout_marginBottom="454dp"
+        android:id="@+id/deviceid_text_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:elevation="8dp"
         android:text="@string/placeholder"
 
         android:textAllCaps="true"
         android:textColor="@color/text_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/user_information"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/user_information"
-        app:layout_constraintTop_toTopOf="@+id/severity_text_1" />
+        app:layout_constraintBottom_toTopOf="@+id/back_to_menu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.504"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.173" />
 
     <TextView
-        android:id="@+id/severity_text_1"
-        android:layout_width="400dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginBottom="594dp"
+        android:id="@+id/severity_text_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:elevation="8dp"
         android:text="@string/placeholder"
         android:textAllCaps="true"
         android:textColor="@color/text_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/user_information"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/user_information"
-        app:layout_constraintTop_toBottomOf="@+id/user_information" />
+        app:layout_constraintBottom_toTopOf="@+id/deviceid_text_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/user_information"
+        app:layout_constraintVertical_bias=".5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

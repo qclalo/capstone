@@ -65,5 +65,9 @@
         <action
             android:id="@+id/action_deviceInfoFragment_to_oneDeviceFragment"
             app:destination="@id/oneDeviceFragment" />
+        <argument
+            android:name="device_id"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

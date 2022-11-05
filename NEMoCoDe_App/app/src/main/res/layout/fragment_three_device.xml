@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.4"
-        android:background="@color/space"
+        android:background="@color/app_background"
         android:orientation="vertical">
 
         <Button
@@ -23,9 +23,9 @@
             android:layout_gravity="center"
             android:layout_marginStart="144dp"
             android:layout_marginEnd="144dp"
-            android:backgroundTint="@color/mint"
+            android:backgroundTint="@color/button_color"
             android:text="@string/add_device"
-            android:textColor="@color/space"
+            android:textColor="@color/text_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="33dp"
         android:layout_weight="2"
-        android:background="@color/space"
+        android:background="@color/app_background"
         android:orientation="vertical">
 
         <ImageView
@@ -115,7 +115,7 @@
             android:gravity="center"
             android:text="@string/placeholder"
             android:textAllCaps="true"
-            android:textColor="@color/space"
+            android:textColor="@color/text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.013"
@@ -135,8 +135,7 @@
             app:layout_constraintHorizontal_bias="0.962"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.38"
-            app:strokeColor="@color/purple_500" />
+            app:layout_constraintVertical_bias="0.38" />
 
         <ImageView
             android:id="@+id/severity_icon_2"
@@ -176,7 +175,7 @@
             android:gravity="center"
             android:text="@string/placeholder"
             android:textAllCaps="true"
-            android:textColor="@color/space"
+            android:textColor="@color/text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.962"
@@ -207,7 +206,7 @@
         android:layout_width="match_parent"
         android:layout_height="33dp"
         android:layout_weight="2"
-        android:background="@color/space"
+        android:background="@color/app_background"
         android:orientation="vertical"
         tools:layout_editor_absoluteY="266dp">
 
@@ -266,7 +265,7 @@
             android:gravity="center"
             android:text="@string/placeholder"
             android:textAllCaps="true"
-            android:textColor="@color/space"
+            android:textColor="@color/text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
@@ -298,7 +297,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@color/space"
+        android:background="@color/app_background"
         android:orientation="vertical"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteY="1010dp">
@@ -309,9 +308,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/mint"
+            android:backgroundTint="@color/button_color"
             android:text="@string/delete_device"
-            android:textColor="@color/space"
+            android:textColor="@color/text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
