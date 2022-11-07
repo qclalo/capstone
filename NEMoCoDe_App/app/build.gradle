@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.example.nemocode_app"
         minSdk 21
-        targetSdk 32
+        targetSdk 28 //previously 32
         versionCode 1
         versionName "1.0"
 

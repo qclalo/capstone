@@ -3,6 +3,8 @@ from enum import Enum
 from math import sqrt
 import board
 import adafruit_adxl37x
+import bluetooth
+import subprocess
 
 """
 Intended to function as a global constant that indicates a concussion has occurred once this value is surpassed.
@@ -11,7 +13,6 @@ Until we better understand the data format of the accelerometers then this will 
 ACCEL_THRESHOLD_LOW = 30
 ACCEL_THRESHOLD_MEDIUM = 60
 ACCEL_THRESHOLD_HIGH = 90
-
 
 class Severity(Enum):
     """
@@ -23,7 +24,6 @@ class Severity(Enum):
     LOW = 1
     MEDIUM = 2
     HIGH = 3
-
 
 class AccelerometerPacket:
     def __init__(self, id: int, x: float, y: float, z: float):
@@ -55,7 +55,7 @@ class Controller:
 
     def __init__(self):
         self.time = 0
-        self.queue = deque([], maxlen=10)
+        self.queue = deque([], maxlen = 10)
         self.accel_ports = {}
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
@@ -67,6 +67,7 @@ class Controller:
         data = self.accel_ports[id].acceleration
         accel_packet = AccelerometerPacket(id, data[0], data[1], data[2])
         return accel_packet
+
 
     def calculate_vector_length(self, x: float, y: float, z: float):
         return sqrt((x ** 2) + (y ** 2) + (z ** 2))
@@ -82,12 +83,13 @@ class Controller:
         else:
             packet.severity_rating = Severity.MINIMAL
 
+
     def assemble_package(self, packets) -> Package:
         """
         :param Packet[] packets: a group of packets representing a single data collection moment
         :returns A Package created from an array of Packets with synchronized timings
         """
-        packets.sort(key=lambda x: x.id)
+        packets.sort(key = lambda x: x.id)
         return Package(self.time, packets)
 
     def add_package_to_queue(self, pack: Package):
@@ -107,7 +109,7 @@ class Controller:
         try:
             i2c = board.I2C()
             accelerometer = adafruit_adxl37x.ADXL375(i2c, accel_port)
-        except:
+        except: 
             raise Exception(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
         self.accel_ports[id] = accelerometer
         return accelerometer
@@ -126,7 +128,7 @@ class Controller:
             packets.append(packet)
         package = self.assemble_package(packets)
         self.add_package_to_queue(package)
-        if (package.severity_rating == Severity.HIGH):
+        if(package.severity_rating == Severity.HIGH):
             data = self.create_impact_data()
             self.alert_user(data)
         self.time += 1
@@ -150,10 +152,31 @@ class Controller:
 
     def connect_to_user_device(self) -> bool:
         """
-        connects the microcontroller to phone application and initiates mic`rocontroller in standby mode
+        connects the microcontroller to phone application and initiates microcontroller in standby mode
         @returns a true or false indicating if the connection is successful`
         """
-        pass
+        result = subprocess.run(['bash', 'bluetooth_settings.sh'], stdout=subprocess.PIPE)
+        print(result.stdout.decode('UTF-8'))
+        bt_mac = result.stdout.decode('UTF-8').split("hci0")[1].split("BD Address: ")[1].split(" ")[0].strip() 
+        print(bt_mac)
+        port = 5
+        backlog = 1
+        size = 1024
+        socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+        socket.bind((bt_mac, port))
+        socket.listen(backlog)
+        try:
+            client, clientInfo = socket.accept()
+            while 1:
+                data = client.recv(size)
+                if data:
+                    print(data)
+                    client.send(data)
+        except:
+            print("Closing socket")
+            client.close()
+            socket.close()
+
 
     def start_session(self):
         """
