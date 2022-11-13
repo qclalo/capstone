@@ -7,8 +7,13 @@ import bluetooth
 import subprocess
 
 """
-Intended to function as a global constant that indicates a concussion has occurred once this value is surpassed.
-Until we better understand the data format of the accelerometers then this will be a dummy number.
+Data from the accelerometers is in meters per second. Our algorithm uses "g's".
+This constant is used to convert meters per second to g's.
+"""
+GRAVITY_ACCEL_MULTIPLIER = 1 / 9.81
+
+"""
+Thresholds for low, medium, and high instantaneous acceleration alerts in g's
 """
 ACCEL_THRESHOLD_LOW = 30
 ACCEL_THRESHOLD_MEDIUM = 60
@@ -65,7 +70,7 @@ class Controller:
         returns A packet representing x - y - z acceleration at a moment in time
         """
         data = self.accel_ports[id].acceleration
-        accel_packet = AccelerometerPacket(id, data[0], data[1], data[2])
+        accel_packet = AccelerometerPacket(id, GRAVITY_ACCEL_MULTIPLIER * data[0], GRAVITY_ACCEL_MULTIPLIER * data[1], GRAVITY_ACCEL_MULTIPLIER * data[2])
         return accel_packet
 
 
