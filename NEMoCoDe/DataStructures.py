@@ -48,10 +48,9 @@ class AccelerometerPacket:
         self.x = x
         self.y = y
         self.z = z
-        self.severity_rating = Severity.UNSET
 
-    def get_accel_data(self):
-        return {self.x, self.y, self.z}
+    def accel_magnitude(self):
+        return sqrt((self.x ** 2) + (self.y ** 2) + (self.z ** 2))
 
 
 class Package:
@@ -59,7 +58,18 @@ class Package:
         # packs: AccelerometerPacket[]
         self.t = t
         self.packs = packs
-        self.severity_rating = max([pack.severity_rating for pack in packs])
+        self.max_acceleration = max([pack.accel_magnitude() for pack in packs])
+        self.severity_rating = self.calculate_package_severity()
+
+    def calculate_package_severity(self):
+        if (self.max_acceleration >= ACCEL_THRESHOLD_HIGH):
+            return Severity.HIGH
+        elif (self.max_acceleration >= ACCEL_THRESHOLD_MEDIUM):
+            return Severity.MEDIUM
+        elif (self.max_acceleration >= ACCEL_THRESHOLD_LOW):
+            return Severity.LOW
+        else:
+            return Severity.MINIMAL
 
 
 class ImpactData:
@@ -103,22 +113,6 @@ class Controller:
         accel_packet = AccelerometerPacket(id, GRAVITY_ACCEL_MULTIPLIER * data[0], GRAVITY_ACCEL_MULTIPLIER * data[1], GRAVITY_ACCEL_MULTIPLIER * data[2])
         return accel_packet
 
-
-    def calculate_vector_length(self, x: float, y: float, z: float):
-        return sqrt((x ** 2) + (y ** 2) + (z ** 2))
-
-    def assign_packet_severity(self, packet: AccelerometerPacket):
-        accel_magnitude = self.calculate_vector_length(packet.x, packet.y, packet.z)
-        if (accel_magnitude >= ACCEL_THRESHOLD_HIGH):
-            packet.severity_rating = Severity.HIGH
-        elif (accel_magnitude >= ACCEL_THRESHOLD_MEDIUM):
-            packet.severity_rating = Severity.MEDIUM
-        elif (accel_magnitude >= ACCEL_THRESHOLD_LOW):
-            packet.severity_rating = Severity.LOW
-        else:
-            packet.severity_rating = Severity.MINIMAL
-
-
     def assemble_package(self, packets) -> Package:
         """
         :param Packet[] packets: a group of packets representing a single data collection moment
@@ -159,7 +153,6 @@ class Controller:
         packets = []
         for index in self.accel_ports:
             packet = self.get_accelerometer_packet(index)
-            self.assign_packet_severity(packet)
             packets.append(packet)
         package = self.assemble_package(packets)
         self.add_package_to_queue(package)
