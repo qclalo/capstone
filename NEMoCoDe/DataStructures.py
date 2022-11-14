@@ -1,10 +1,12 @@
 from collections import deque
 from enum import Enum
 from math import sqrt
+from math import floor
 import board
 import adafruit_adxl37x
 import bluetooth
 import subprocess
+import sys
 
 """
 Data from the accelerometers is in meters per second. Our algorithm uses "g's".
@@ -18,6 +20,11 @@ Thresholds for low, medium, and high instantaneous acceleration alerts in g's
 ACCEL_THRESHOLD_LOW = 30
 ACCEL_THRESHOLD_MEDIUM = 60
 ACCEL_THRESHOLD_HIGH = 90
+
+"""
+Size, in bytes, of the data transmission from nemocode to app
+"""
+DATA_TRANSMISSION_SIZE = 1024
 
 class Severity(Enum):
     """
@@ -47,13 +54,42 @@ class Package:
         # packs: AccelerometerPacket[]
         self.t = t
         self.packs = packs
-        self.severity_rating = max([pack.severity_rating for pack in packs])
+        if packs == []:
+            self.severity_rating = Severity.UNSET
+        else:
+            self.severity_rating = max([pack.severity_rating for pack in packs])
 
 
 class ImpactData:
-    def __init__(self, severity: Severity, data: deque):
+    def __init__(self, severity: Severity, data: deque, data_size: int):
         self.severity = severity
         self.data = data
+        self.data_size = sys.getsizeof(data)
+        
+        package_capacity = floor(DATA_TRANSMISSION_SIZE / sys.getsizeof(data.index(0)))
+        leftover_bytes = DATA_TRANSMISSION_SIZE % sys.getsizeof(data.index(0))
+        """
+        If there is less data than we send, pad it(?) This needs to be changed, waiting on input from Alec regarding bluetooth transmission reqs
+
+        Else if there is more data than we send, trim it.
+
+        Else, do something(?)
+        """
+        if len(data) < package_capacity:
+            diff = package_capacity - len(data)
+            junk_package = Package(-1, [])
+            i = 0
+            while i < diff:
+                data.appendleft(junk_package)
+                i += 1
+        elif len(data) > package_capacity:
+            diff = len(data) - package_capacity
+            i = 0
+            while i < diff:
+                data.popleft()
+                i += 1
+        else:
+            pass
 
 
 class Controller:
@@ -99,7 +135,7 @@ class Controller:
 
     def add_package_to_queue(self, pack: Package):
         """
-        Adds a Package to the front of the queue and removes the oldest Package from the rear of the queue, if the queue is full.
+        Adds a Package to the back of the queue and removes the oldest Package from the front of the queue, if the queue is full.
         :param Package pack: the Package object to be added to the queue
         """
         self.queue.append(pack)
@@ -166,7 +202,7 @@ class Controller:
         print(bt_mac)
         port = 5
         backlog = 1
-        size = 1024
+        size = DATA_TRANSMISSION_SIZE
         socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
         socket.bind((bt_mac, port))
         socket.listen(backlog)
