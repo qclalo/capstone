@@ -73,12 +73,14 @@ class Package:
 
 
 class ImpactData:
-    def __init__(self, data: deque, data_size: int):
+    def __init__(self, data: deque):
         self.data = data
         self.data_size = sys.getsizeof(data)
-
-        package_capacity = floor(DATA_TRANSMISSION_SIZE / sys.getsizeof(data.index(0)))
-        leftover_bytes = DATA_TRANSMISSION_SIZE % sys.getsizeof(data.index(0))
+        first_package = data.popleft()
+        package_size = sys.getsizeof(first_package)
+        data.appendleft(first_package)
+        package_capacity = floor(DATA_TRANSMISSION_SIZE / package_size)
+        leftover_bytes = DATA_TRANSMISSION_SIZE % package_size
         """
         If there is more data than we send, trim it.
 
@@ -181,14 +183,9 @@ class Controller:
         Send alert to application with ImpactData for further analysis
         :param ImpactData report: ImpactData object sent to application for further analysis
         """
-        data = self.client.recv(DATA_TRANSMISSION_SIZE)
-        if data:
-            print(data)
-            self.client.send(data)
-            if data.decode('UTF-8').equals("quit"):
-                self.end_session()
-                exit(0)
-        self.client.send(report.data)
+        while len(report.data) != 0:
+            package = report.data.popleft()
+            self.client.send(bytes(f'{package.max_acceleration}'.encode('UTF-8')))
 
 
     def connect_to_user_device(self):
@@ -207,6 +204,7 @@ class Controller:
         self.socket.bind((bt_mac, port))
         self.socket.listen(backlog)
         self.client, clientInfo = self.socket.accept()
+        print(f'Connected to socket with MAC address = {clientInfo}')
 
     def start_session(self):
         """
