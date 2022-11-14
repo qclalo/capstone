@@ -26,6 +26,9 @@ Size, in bytes, of the data transmission from nemocode to app
 """
 DATA_TRANSMISSION_SIZE = 1024
 
+"""
+Default number of cycles to wait until data is transmitted after receiving a high severity event.
+"""
 CYCLES = 10
 
 class Severity(Enum):
@@ -45,10 +48,9 @@ class AccelerometerPacket:
         self.x = x
         self.y = y
         self.z = z
-        self.severity_rating = Severity.UNSET
 
-    def get_accel_data(self):
-        return {self.x, self.y, self.z}
+    def accel_magnitude(self):
+        return sqrt((self.x ** 2) + (self.y ** 2) + (self.z ** 2))
 
 
 class Package:
@@ -56,35 +58,33 @@ class Package:
         # packs: AccelerometerPacket[]
         self.t = t
         self.packs = packs
-        if packs == []:
-            self.severity_rating = Severity.UNSET
+        self.max_acceleration = max([pack.accel_magnitude() for pack in packs])
+        self.severity_rating = self.calculate_package_severity()
+
+    def calculate_package_severity(self):
+        if (self.max_acceleration >= ACCEL_THRESHOLD_HIGH):
+            return Severity.HIGH
+        elif (self.max_acceleration >= ACCEL_THRESHOLD_MEDIUM):
+            return Severity.MEDIUM
+        elif (self.max_acceleration >= ACCEL_THRESHOLD_LOW):
+            return Severity.LOW
         else:
-            self.severity_rating = max([pack.severity_rating for pack in packs])
+            return Severity.MINIMAL
 
 
 class ImpactData:
-    def __init__(self, severity: Severity, data: deque, data_size: int):
-        self.severity = severity
+    def __init__(self, data: deque, data_size: int):
         self.data = data
         self.data_size = sys.getsizeof(data)
 
         package_capacity = floor(DATA_TRANSMISSION_SIZE / sys.getsizeof(data.index(0)))
         leftover_bytes = DATA_TRANSMISSION_SIZE % sys.getsizeof(data.index(0))
         """
-        If there is less data than we send, pad it(?) This needs to be changed, waiting on input from Alec regarding bluetooth transmission reqs
-
-        Else if there is more data than we send, trim it.
+        If there is more data than we send, trim it.
 
         Else, do something(?)
         """
-        if len(data) < package_capacity:
-            diff = package_capacity - len(data)
-            junk_package = Package(-1, [])
-            i = 0
-            while i < diff:
-                data.appendleft(junk_package)
-                i += 1
-        elif len(data) > package_capacity:
+        if len(data) > package_capacity:
             diff = len(data) - package_capacity
             i = 0
             while i < diff:
@@ -114,22 +114,6 @@ class Controller:
         data = self.accel_ports[id].acceleration
         accel_packet = AccelerometerPacket(id, GRAVITY_ACCEL_MULTIPLIER * data[0], GRAVITY_ACCEL_MULTIPLIER * data[1], GRAVITY_ACCEL_MULTIPLIER * data[2])
         return accel_packet
-
-
-    def calculate_vector_length(self, x: float, y: float, z: float):
-        return sqrt((x ** 2) + (y ** 2) + (z ** 2))
-
-    def assign_packet_severity(self, packet: AccelerometerPacket):
-        accel_magnitude = self.calculate_vector_length(packet.x, packet.y, packet.z)
-        if (accel_magnitude >= ACCEL_THRESHOLD_HIGH):
-            packet.severity_rating = Severity.HIGH
-        elif (accel_magnitude >= ACCEL_THRESHOLD_MEDIUM):
-            packet.severity_rating = Severity.MEDIUM
-        elif (accel_magnitude >= ACCEL_THRESHOLD_LOW):
-            packet.severity_rating = Severity.LOW
-        else:
-            packet.severity_rating = Severity.MINIMAL
-
 
     def assemble_package(self, packets) -> Package:
         """
@@ -171,7 +155,6 @@ class Controller:
         packets = []
         for index in self.accel_ports:
             packet = self.get_accelerometer_packet(index)
-            self.assign_packet_severity(packet)
             packets.append(packet)
         package = self.assemble_package(packets)
         self.add_package_to_queue(package)
@@ -191,10 +174,7 @@ class Controller:
         Create an ImpactData object from the current queue data
         This object will contain critical information that the client controller needs to visualize the data
         """
-        last_element_in_queue = self.queue.pop()
-        severity_rating = last_element_in_queue.severity_rating
-        self.queue.append(last_element_in_queue)
-        return ImpactData(severity_rating, self.queue)
+        return ImpactData(self.queue)
 
     def alert_user(self, report: ImpactData):
         """
