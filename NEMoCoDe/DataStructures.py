@@ -26,6 +26,8 @@ Size, in bytes, of the data transmission from nemocode to app
 """
 DATA_TRANSMISSION_SIZE = 1024
 
+CYCLES = 10
+
 class Severity(Enum):
     """
     An enum representing different severity scores.
@@ -98,6 +100,8 @@ class Controller:
         self.time = 0
         self.queue = deque([], maxlen = 10)
         self.accel_ports = {}
+        self.alarm_flag = False
+        self.cycles_before_report = CYCLES
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         """
@@ -169,9 +173,15 @@ class Controller:
             packets.append(packet)
         package = self.assemble_package(packets)
         self.add_package_to_queue(package)
-        if(package.severity_rating == Severity.HIGH):
+        if package.severity_rating == Severity.HIGH:
+            self.alarm_flag = True
+        if self.alarm_flag:
+            self.cycles_before_report -= 1
+        if self.cycles_before_report == 0:
             data = self.create_impact_data()
             self.alert_user(data)
+            self.alarm_flag = False
+            self.cycles_before_report = CYCLES
         self.time += 1
 
     def create_impact_data(self) -> ImpactData:
