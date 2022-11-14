@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     fun getPairedDevices() {
         val btDevices = bluetoothAdapter.bondedDevices
         Log.d("Bluetooth", "Found ${btDevices.size} paired devices")
-        Log.d("Bluetooth", "Paired devices: ${btDevices}")
+        Log.d("Bluetooth", "Paired devices: $btDevices")
         for (device in btDevices) {
             if (device.name.contains("nemocode")) {
                 deviceFragmentViewModel.btDevices[device.name] = device
@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity() {
                     BluetoothAdapter.STATE_TURNING_OFF->{
                         Log.d("Bluetooth","Bluetooth turning off")
                     }
-                    BluetoothAdapter.STATE_ON->{
+                    BluetoothAdapter.STATE_ON-> {
                         Log.d("Bluetooth","Bluetooth On")
                     }
                     BluetoothAdapter.STATE_TURNING_ON->{

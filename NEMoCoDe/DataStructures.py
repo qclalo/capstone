@@ -67,7 +67,7 @@ class ImpactData:
         self.severity = severity
         self.data = data
         self.data_size = sys.getsizeof(data)
-        
+
         package_capacity = floor(DATA_TRANSMISSION_SIZE / sys.getsizeof(data.index(0)))
         leftover_bytes = DATA_TRANSMISSION_SIZE % sys.getsizeof(data.index(0))
         """
@@ -102,6 +102,8 @@ class Controller:
         self.accel_ports = {}
         self.alarm_flag = False
         self.cycles_before_report = CYCLES
+        self.client = None
+        self.socket = None
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         """
@@ -154,7 +156,7 @@ class Controller:
         try:
             i2c = board.I2C()
             accelerometer = adafruit_adxl37x.ADXL375(i2c, accel_port)
-        except: 
+        except:
             raise Exception(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
         self.accel_ports[id] = accelerometer
         return accelerometer
@@ -199,35 +201,32 @@ class Controller:
         Send alert to application with ImpactData for further analysis
         :param ImpactData report: ImpactData object sent to application for further analysis
         """
-        pass
+        data = self.client.recv(DATA_TRANSMISSION_SIZE)
+        if data:
+            print(data)
+            self.client.send(data)
+            if data.decode('UTF-8').equals("quit"):
+                self.end_session()
+                exit(0)
+        self.client.send(report.data)
 
-    def connect_to_user_device(self) -> bool:
+
+    def connect_to_user_device(self):
         """
         connects the microcontroller to phone application and initiates microcontroller in standby mode
         @returns a true or false indicating if the connection is successful`
         """
         result = subprocess.run(['bash', 'bluetooth_settings.sh'], stdout=subprocess.PIPE)
         print(result.stdout.decode('UTF-8'))
-        bt_mac = result.stdout.decode('UTF-8').split("hci0")[1].split("BD Address: ")[1].split(" ")[0].strip() 
+        bt_mac = result.stdout.decode('UTF-8').split("hci0")[1].split("BD Address: ")[1].split(" ")[0].strip()
         print(bt_mac)
         port = 5
         backlog = 1
         size = DATA_TRANSMISSION_SIZE
-        socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-        socket.bind((bt_mac, port))
-        socket.listen(backlog)
-        try:
-            client, clientInfo = socket.accept()
-            while 1:
-                data = client.recv(size)
-                if data:
-                    print(data)
-                    client.send(data)
-        except:
-            print("Closing socket")
-            client.close()
-            socket.close()
-
+        self.socket = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
+        self.socket.bind((bt_mac, port))
+        self.socket.listen(backlog)
+        self.client, clientInfo = self.socket.accept()
 
     def start_session(self):
         """
@@ -241,3 +240,10 @@ class Controller:
         start session indication.
         """
         pass
+
+    def end_session(self):
+        print("Closing sockets")
+        if self.client is not None:
+            self.client.close()
+        if self.socket is not None:
+            self.socket.close()
