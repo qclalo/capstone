@@ -1,7 +1,10 @@
 package com.example.nemocode_app
 
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import java.io.IOException
 
 class MyViewModel : ViewModel() {
     var devices: MutableList<Device> = mutableListOf()
@@ -28,3 +31,4 @@ class Device constructor(var userName: String, var deviceId: Int, var severity: 
 enum class Severity {
     HEALTHY, LOW_RISK, MEDIUM_RISK, HIGH_RISK
 }
+
