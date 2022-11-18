@@ -37,6 +37,7 @@ const val MESSAGE_WRITE: Int = 1
 const val MESSAGE_TOAST: Int = 2
 
 class MainActivity : AppCompatActivity() {
+
     val deviceFragmentViewModel: MyViewModel = MyViewModel()
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var bluetoothManager: BluetoothManager
@@ -231,6 +232,8 @@ class MainActivity : AppCompatActivity() {
         private val mmInStream: InputStream = mmSocket.inputStream
         private val mmOutStream: OutputStream = mmSocket.outputStream
         private val mmBuffer: ByteArray = ByteArray(1024) // mmBuffer store for the stream
+
+        val inputAsString = mmInStream.bufferedReader().use { it.readText() }
 
         override fun run() {
             var numBytes: Int // bytes returned from read()

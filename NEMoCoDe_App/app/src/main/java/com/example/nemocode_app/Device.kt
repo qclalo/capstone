@@ -13,6 +13,7 @@ class MyViewModel : ViewModel() {
 
 class Device constructor(var userName: String, var deviceId: Int, var severity: Severity) {
     var macAddress = ""
+    var accelerationData : MutableList<Double> = mutableListOf()
 
     fun getSeverityText(): String {
         return when (this.severity) {
