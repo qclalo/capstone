@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        Intent.FLAG_ACTIVITY_NEW_TASK
         bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
     }
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
             val intentFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
             registerReceiver(bluetoothReceiver, intentFilter)
         }
-        Log.i("Bluetooth", "Bluetooth enabled")
+        Log.d("Bluetooth", "Bluetooth enabled")
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 BluetoothDevice.ACTION_FOUND -> {
                     val device = intent?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                    if (device != null) {
+                    if (device != null && device.name != null) {
                         if (device.name.contains("nemocode")) {
                             deviceFragmentViewModel.btDevices[device.name] = device
                         }
@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity() {
             val deviceUuid : UUID = UUID.fromString("3f6c999f-92d2-411b-b756-3212dddf83b7")
             for (uuidFound in device.uuids.iterator()) {
                 if (deviceUuid == uuidFound.uuid) {
-                    Log.i("Bluetooth", "Found matching uuid in socket")
+                    Log.d("Bluetooth", "Found matching uuid in socket")
                 }
             }
             device.createRfcommSocketToServiceRecord(deviceUuid)
@@ -207,7 +207,7 @@ class MainActivity : AppCompatActivity() {
                 // Connect to the remote device through the socket. This call blocks
                 // until it succeeds or throws an exception.
                 socket.connect()
-                Log.i("Bluetooth", "Connection to bluetooth device succeeded");
+                Log.d("Bluetooth", "Connection to bluetooth device succeeded");
 
                 // The connection attempt succeeded. Perform work associated with
                 // the connection in a separate thread.
