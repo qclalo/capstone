@@ -2,32 +2,26 @@ package com.example.nemocode_app
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothSocket
 import android.content.*
 import android.content.pm.PackageManager
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.method.LinkMovementMethod
 import android.util.Log
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.Socket
+import java.lang.reflect.Method
 import java.util.*
 
 // Defines several constants used when transmitting messages between the
@@ -41,8 +35,6 @@ class MainActivity : AppCompatActivity() {
     val deviceFragmentViewModel: MyViewModel = MyViewModel()
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var bluetoothManager: BluetoothManager
-    private lateinit var connectThread : ConnectThread
-    private lateinit var connectedThread: ConnectedThread
     private val REQUEST_ACCESS_COARSE_LOCATION = 101
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -50,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         Intent.FLAG_ACTIVITY_NEW_TASK
         bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
@@ -66,7 +59,6 @@ class MainActivity : AppCompatActivity() {
         Log.i("Lifecycle", "In onDestroy in MainActivity")
         unregisterReceiver(bluetoothReceiver)
         unregisterReceiver(discoverDeviceReceiver)
-        this.connectThread.cancel()
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -124,6 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val discoverDeviceReceiver = object : BroadcastReceiver() {
+        @RequiresApi(Build.VERSION_CODES.S)
         @SuppressLint("MissingPermission")
         override fun onReceive(context: Context?, intent: Intent?) {
             var action = ""
@@ -143,10 +136,11 @@ class MainActivity : AppCompatActivity() {
                 BluetoothDevice.ACTION_FOUND -> {
                     val device = intent?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
                     if (device != null && device.name != null) {
-                        if (device.name.contains("nemocode")) {
-                            deviceFragmentViewModel.btDevices[device.name] = device
-                        }
                         Log.d("Bluetooth", "Bluetooth device found ${device.name}  ${device.address}")
+                        if (device.name.contains("nemocode") || device.name.contains("LAPTOP")) {
+                            deviceFragmentViewModel.btDevices[device.name] = device
+                            connectDevice(device)
+                        }
                     }
                 }
             }
@@ -156,8 +150,23 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("MissingPermission")
     fun connectDevice(device: BluetoothDevice) {
-        this.connectThread = ConnectThread(device)
-        this.connectThread.run()
+        Log.d("Bluetooth", "Connecting to ${device.name}")
+        val port = 5
+        val m : Method = device.javaClass.getMethod("createRfcommSocket", Int::class.javaPrimitiveType)
+        val socket : BluetoothSocket = m.invoke(device, port) as BluetoothSocket
+        socket.connect()
+        Log.d("Bluetooth", "Successfully connected to ${device.name} on port $port")
+        //this.monitorConnection(socket)
+        socket.outputStream.write("Hello World".toByteArray())
+    }
+
+    fun monitorConnection(socket : BluetoothSocket) {
+        // The connection attempt succeeded. Perform work associated with
+        // the connection in a separate thread.
+        val handler = Handler(Looper.getMainLooper())
+        val bluetoothService : MyBluetoothService = MyBluetoothService(handler)
+//        connectedThread = ConnectedThread(handler, socket)
+//        connectedThread.run()
     }
 
     private val bluetoothReceiver = object : BroadcastReceiver() {
@@ -181,59 +190,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+}
 
-    @SuppressLint("MissingPermission")
-    @RequiresApi(Build.VERSION_CODES.S)
-    private inner class ConnectThread(device: BluetoothDevice) : Thread() {
+class MyBluetoothService(private val handler : Handler) {
 
-        private val mmSocket: BluetoothSocket? by lazy(LazyThreadSafetyMode.NONE) {
-            val deviceUuid : UUID = UUID.fromString("3f6c999f-92d2-411b-b756-3212dddf83b7")
-            for (uuidFound in device.uuids.iterator()) {
-                if (deviceUuid == uuidFound.uuid) {
-                    Log.d("Bluetooth", "Found matching uuid in socket")
-                }
-            }
-            device.createRfcommSocketToServiceRecord(deviceUuid)
-        }
-
-        @RequiresPermission(Manifest.permission.BLUETOOTH_SCAN)
-        override fun run() {
-            // Cancel discovery because it otherwise slows down the connection.
-            bluetoothAdapter.cancelDiscovery()
-
-            val handler : Handler = Handler(Looper.getMainLooper())
-
-            mmSocket?.let { socket ->
-                // Connect to the remote device through the socket. This call blocks
-                // until it succeeds or throws an exception.
-                socket.connect()
-                Log.d("Bluetooth", "Connection to bluetooth device succeeded");
-
-                // The connection attempt succeeded. Perform work associated with
-                // the connection in a separate thread.
-                connectedThread = ConnectedThread(handler, mmSocket!!)
-                connectedThread.run()
-            }
-        }
-
-        // Closes the client socket and causes the thread to finish.
-        fun cancel() {
-            try {
-                mmSocket?.close()
-            } catch (e: IOException) {
-                Log.e("Error", "Could not close the client socket", e)
-            }
-        }
-    }
-
-    private inner class ConnectedThread(private val handler : Handler,
-        private val mmSocket: BluetoothSocket) : Thread() {
+    private inner class ConnectedThread(private val mmSocket: BluetoothSocket) : Thread() {
 
         private val mmInStream: InputStream = mmSocket.inputStream
         private val mmOutStream: OutputStream = mmSocket.outputStream
         private val mmBuffer: ByteArray = ByteArray(1024) // mmBuffer store for the stream
-
-        val inputAsString = mmInStream.bufferedReader().use { it.readText() }
 
         override fun run() {
             var numBytes: Int // bytes returned from read()
