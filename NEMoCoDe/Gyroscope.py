@@ -7,6 +7,8 @@ import adafruit_adxl37x
 import bluetooth
 import subprocess
 import sys
+import smbus
+import time
 
 """
 I3G4250DTR gyroscope
@@ -21,9 +23,7 @@ GRAVITY_ACCEL_MULTIPLIER = 1 / 9.81
 """
 Thresholds for low, medium, and high instantaneous acceleration alerts in g's
 """
-ACCEL_THRESHOLD_LOW = 30
-ACCEL_THRESHOLD_MEDIUM = 60
-ACCEL_THRESHOLD_HIGH = 90
+ROTATION_THRESHOLD_HIGH = 3 * 10 ^ 6
 
 """
 Size, in bytes, of the data transmission from nemocode to app
@@ -35,6 +35,23 @@ Default number of cycles to wait until data is transmitted after receiving a hig
 """
 CYCLES = 10
 
+bus = smbus.SMBus(1)
+
+OUT_X_L = 0x28
+OUT_X_H = 0x29
+OUT_Y_L = 0x2A
+OUT_Y_H = 0x2B
+OUT_Z_L = 0x2C
+OUT_Z_H = 0x2D
+
+bus.write_byte_data(0x28, 0x2A, 0x2C)
+bus.write_byte_data(0x29, 0x2B, 0x2D)
+
+time.sleep(0.5)
+
+data0 = bus.read_byte_data()
+
+
 class Severity(Enum):
     """
     An enum representing different severity scores.
@@ -45,6 +62,17 @@ class Severity(Enum):
     LOW = 1
     MEDIUM = 2
     HIGH = 3
+
+    """
+    OUT_X_L : 0x28
+    OUT_X_H : 0x29
+    OUT_Y_L : 0x2A
+    OUT_Y_H : 0x2B
+    OUT_Z_L : 0x2C
+    OUT_Z_H : 0x2D
+    """
+
+
 
 class GyroscopePacket:
     def __init__(self, id: int, x: float, y: float, z: float):
