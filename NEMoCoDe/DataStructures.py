@@ -4,10 +4,26 @@ from math import sqrt
 from math import floor
 import board
 import adafruit_adxl37x
+import adafruit_tca9548a
 import bluetooth
 import subprocess
 import sys
 
+"""
+I2C Addresses for the accelerometers
+"""
+DEVICE_ADDRESS = 0x1D
+READ_ADDRESS = 0x3B
+WRITE_ADDRESS = 0x3A
+
+DEVICE_ADDRESS_ALT = 0x53
+READ_ADDRESS_ALT = 0xA7
+WRITE_ADDRESS_ALT = 0xA6
+
+"""
+Number of accelerometers in use by the device
+"""
+ACCELEROMETER_COUNT = 5
 """
 Data from the accelerometers is in meters per second. Our algorithm uses "g's".
 This constant is used to convert meters per second to g's.
@@ -106,6 +122,8 @@ class Controller:
         self.cycles_before_report = CYCLES
         self.client = None
         self.socket = None
+        self.i2c = board.I2C()
+        self.multiplexer = adafruit_tca9548a.TCA9548A(self.i2c)
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         """
@@ -117,21 +135,6 @@ class Controller:
         accel_packet = AccelerometerPacket(id, GRAVITY_ACCEL_MULTIPLIER * data[0], GRAVITY_ACCEL_MULTIPLIER * data[1], GRAVITY_ACCEL_MULTIPLIER * data[2])
         return accel_packet
 
-    def assemble_package(self, packets) -> Package:
-        """
-        :param Packet[] packets: a group of packets representing a single data collection moment
-        :returns A Package created from an array of Packets with synchronized timings
-        """
-        packets.sort(key = lambda x: x.id)
-        return Package(self.time, packets)
-
-    def add_package_to_queue(self, pack: Package):
-        """
-        Adds a Package to the back of the queue and removes the oldest Package from the front of the queue, if the queue is full.
-        :param Package pack: the Package object to be added to the queue
-        """
-        self.queue.append(pack)
-
     def initialize_connection(self, accel_port: int, id: int):
         """
         :param SerialID accel_port: i2c address specific accelerometer being connected to
@@ -140,43 +143,50 @@ class Controller:
         :returns an accelerometer object representing the accelerometer connected to
         """
         try:
-            i2c = board.I2C()
-            accelerometer = adafruit_adxl37x.ADXL375(i2c, accel_port)
+            accelerometer = adafruit_adxl37x.ADXL375(self.i2c, accel_port)
         except:
-            raise Exception(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
+            print(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
+            
         self.accel_ports[id] = accelerometer
         return accelerometer
 
     def run_data_collection_loop(self):
         """
         Start collecting data from all of the accelerometers
-        Save this data in a circular array / queue type data struct
+        Save this data in a queue
         Watch for potentially concussive events
         If a concussive event is detected, take a snapshot of the data and send back to user
         """
+
         packets = []
-        for index in self.accel_ports:
-            packet = self.get_accelerometer_packet(index)
+
+        for key in self.accel_ports.keys():
+            if key == -1:
+                # We have the always-on accelerometer,
+                # and we can go ahead and read from it.
+                packet = self.get_accelerometer_packet(key)
+            else:
+                # We have a multiplexed accelerometer,
+                # and we need to switch to the correct channel.
+                if self.multiplexer[key].try_lock():
+                    # On successful lock, perform a scan of I2C devices on that channel.
+                    addresses = self.multiplexer[key].scan()
+                    if DEVICE_ADDRESS in addresses:
+                        packet = self.get_accelerometer_packet(key)
+                    self.multiplexer[key].unlock()
             packets.append(packet)
-        package = self.assemble_package(packets)
-        self.add_package_to_queue(package)
+        package = Package(self.time, packets)
+        self.queue.append(package)
         if package.severity_rating == Severity.HIGH:
             self.alarm_flag = True
         if self.alarm_flag:
             self.cycles_before_report -= 1
         if self.cycles_before_report == 0:
-            data = self.create_impact_data()
+            data = ImpactData(self.queue)
             self.alert_user(data)
             self.alarm_flag = False
             self.cycles_before_report = CYCLES
         self.time += 1
-
-    def create_impact_data(self) -> ImpactData:
-        """
-        Create an ImpactData object from the current queue data
-        This object will contain critical information that the client controller needs to visualize the data
-        """
-        return ImpactData(self.queue)
 
     def alert_user(self, report: ImpactData):
         """
@@ -210,7 +220,21 @@ class Controller:
         """
         Start data collection loop and give diagnostic info to microcontroller/application
         """
-        pass
+        print('Welcome to NEMoCoDe\n')
+        print('Attempting to establish connection to always-on accelerometer...\n')
+        self.initialize_connection(DEVICE_ADDRESS_ALT, -1)
+        print('Attempting to establish connections to multiplexed accelerometers...\n')
+        for channel in range(8):
+            if self.multiplexer[channel].try_lock():
+                self.initialize_connection(DEVICE_ADDRESS, channel)
+                self.multiplexer[channel].unlock()
+        if len(self.accel_ports) == ACCELEROMETER_COUNT:
+            print(f'Successfully established connection with all {ACCELEROMETER_COUNT} accelerometers')
+        else:
+            print(f'Warning: Failed to establish connection with {ACCELEROMETER_COUNT - len(self.accel_ports)} accelerometers')
+        while True:
+            self.run_data_collection_loop()
+        
 
     def run_standby_loop(self):
         """
