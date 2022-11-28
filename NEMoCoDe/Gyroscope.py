@@ -91,15 +91,19 @@ class Package:
         self.t = t
         self.packs = packs
         self.max_acceleration = max([pack.accel_magnitude() for pack in packs])
+
+        bus.write_byte_data(0x28, 0x2A, 0x2C)
+        bus.write_byte_data(0x29, 0x2B, 0x2D)
+
+        time.sleep(0.5)
+
+        data0 = bus.read_byte_data()
+
         self.severity_rating = self.calculate_package_severity()
 
     def calculate_package_severity(self):
-        if (self.max_acceleration >= ACCEL_THRESHOLD_HIGH):
+        if (data0 >= ROTATION_THRESHOLD_HIGH):
             return Severity.HIGH
-        elif (self.max_acceleration >= ACCEL_THRESHOLD_MEDIUM):
-            return Severity.MEDIUM
-        elif (self.max_acceleration >= ACCEL_THRESHOLD_LOW):
-            return Severity.LOW
         else:
             return Severity.MINIMAL
 
@@ -139,50 +143,9 @@ class Controller:
         self.client = None
         self.socket = None
 
-    def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
-        """
-        Gets a packet from an accelerometer with a given id
-        :param str id: The id of the accelerometer to pull data from
-        returns A packet representing x - y - z acceleration at a moment in time
-        """
-        data = self.accel_ports[id].acceleration
-        accel_packet = AccelerometerPacket(id, GRAVITY_ACCEL_MULTIPLIER * data[0], GRAVITY_ACCEL_MULTIPLIER * data[1], GRAVITY_ACCEL_MULTIPLIER * data[2])
-        return accel_packet
-
-    def assemble_package(self, packets) -> Package:
-        """
-        :param Packet[] packets: a group of packets representing a single data collection moment
-        :returns A Package created from an array of Packets with synchronized timings
-        """
-        packets.sort(key = lambda x: x.id)
-        return Package(self.time, packets)
-
-    def add_package_to_queue(self, pack: Package):
-        """
-        Adds a Package to the back of the queue and removes the oldest Package from the front of the queue, if the queue is full.
-        :param Package pack: the Package object to be added to the queue
-        """
-        self.queue.append(pack)
-
-    def initialize_connection(self, accel_port: int, id: int):
-        """
-        :param SerialID accel_port: i2c address specific accelerometer being connected to
-        :param str id: ID to set for the accelerometer
-        :raises An error if the connection has failed to initialize
-        :returns an accelerometer object representing the accelerometer connected to
-        """
-        try:
-            i2c = board.I2C()
-            accelerometer = adafruit_adxl37x.ADXL375(i2c, accel_port)
-        except:
-            raise Exception(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
-        self.accel_ports[id] = accelerometer
-        return accelerometer
-
     def run_data_collection_loop(self):
         """
-        Start collecting data from all of the accelerometers
-        Save this data in a circular array / queue type data struct
+        Start collecting data from the gyroscope
         Watch for potentially concussive events
         If a concussive event is detected, take a snapshot of the data and send back to user
         """
