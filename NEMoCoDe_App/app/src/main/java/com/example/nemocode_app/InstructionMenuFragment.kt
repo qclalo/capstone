@@ -29,10 +29,15 @@ class InstructionMenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.i("Lifecycle", "In onViewCreated in InstructionMenuFragment")
 
+        val mainActivity : MainActivity = activity as MainActivity
+
         val addDeviceConfirmBtn : Button = view.findViewById(R.id.add_device_confirm)
         addDeviceConfirmBtn.setOnClickListener {
             val deviceInfo = getDeviceInfo(view)
             if (checkValidInfoEntered(deviceInfo)) {
+//                for (entry in mainActivity.deviceFragmentViewModel.btDevices.iterator()) {
+//                    mainActivity.connectDevice(entry.value)
+//                }
                 val action = InstructionMenuFragmentDirections.actionInstructionMenuFragmentToOneDeviceFragment(deviceInfo)
                 findNavController().navigate(action)
             } else {
@@ -53,7 +58,6 @@ class InstructionMenuFragment : Fragment() {
             }
         }
 
-        val mainActivity : MainActivity = activity as MainActivity
         mainActivity.enableBluetooth()
         mainActivity.getPairedDevices()
         mainActivity.discoverDevices()
