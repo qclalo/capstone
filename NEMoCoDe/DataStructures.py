@@ -99,8 +99,6 @@ class ImpactData:
         leftover_bytes = DATA_TRANSMISSION_SIZE % package_size
         """
         If there is more data than we send, trim it.
-
-        Else, do something(?)
         """
         if len(data) > package_capacity:
             diff = len(data) - package_capacity
@@ -108,8 +106,6 @@ class ImpactData:
             while i < diff:
                 data.popleft()
                 i += 1
-        else:
-            pass
 
 
 class Controller:
@@ -157,19 +153,12 @@ class Controller:
         Watch for potentially concussive events
         If a concussive event is detected, take a snapshot of the data and send back to user
         """
-
         packets = []
-
         for key in self.accel_ports.keys():
             if key == -1:
-                # We have the always-on accelerometer,
-                # and we can go ahead and read from it.
                 packet = self.get_accelerometer_packet(key)
             else:
-                # We have a multiplexed accelerometer,
-                # and we need to switch to the correct channel.
                 if self.multiplexer[key].try_lock():
-                    # On successful lock, perform a scan of I2C devices on that channel.
                     addresses = self.multiplexer[key].scan()
                     if DEVICE_ADDRESS in addresses:
                         packet = self.get_accelerometer_packet(key)
@@ -234,14 +223,6 @@ class Controller:
             print(f'Warning: Failed to establish connection with {ACCELEROMETER_COUNT - len(self.accel_ports)} accelerometers')
         while True:
             self.run_data_collection_loop()
-        
-
-    def run_standby_loop(self):
-        """
-        Monitor connection with accelerometers for functionality and connection with application for
-        start session indication.
-        """
-        pass
 
     def end_session(self):
         print("Closing sockets")
