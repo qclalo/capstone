@@ -62,8 +62,8 @@ class OneDeviceFragment : Fragment() {
 
             val deviceBtn : Button? = this.deviceButtons[deviceButtonKey + (i + 1)]
             deviceBtn?.setOnClickListener {
-//                cycleSeverities(i)
-//                setSeverity(severityTextView, severityIcon, i)
+                cycleSeverities(i)
+                setSeverity(severityTextView, severityIcon, i)
                 val action = OneDeviceFragmentDirections.actionOneDeviceFragmentToDeviceInfoFragment(i)
                 findNavController().navigate(action)
             }
