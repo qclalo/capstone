@@ -83,8 +83,6 @@ class ImpactData:
         leftover_bytes = DATA_TRANSMISSION_SIZE % package_size
         """
         If there is more data than we send, trim it.
-
-        Else, do something(?)
         """
         if len(data) > package_capacity:
             diff = len(data) - package_capacity
@@ -92,8 +90,6 @@ class ImpactData:
             while i < diff:
                 data.popleft()
                 i += 1
-        else:
-            pass
 
 
 class Controller:
@@ -106,6 +102,7 @@ class Controller:
         self.cycles_before_report = CYCLES
         self.client = None
         self.socket = None
+        self.i2c = board.I2C()
 
     def get_accelerometer_packet(self, id: int) -> AccelerometerPacket:
         """
@@ -117,21 +114,6 @@ class Controller:
         accel_packet = AccelerometerPacket(id, GRAVITY_ACCEL_MULTIPLIER * data[0], GRAVITY_ACCEL_MULTIPLIER * data[1], GRAVITY_ACCEL_MULTIPLIER * data[2])
         return accel_packet
 
-    def assemble_package(self, packets) -> Package:
-        """
-        :param Packet[] packets: a group of packets representing a single data collection moment
-        :returns A Package created from an array of Packets with synchronized timings
-        """
-        packets.sort(key = lambda x: x.id)
-        return Package(self.time, packets)
-
-    def add_package_to_queue(self, pack: Package):
-        """
-        Adds a Package to the back of the queue and removes the oldest Package from the front of the queue, if the queue is full.
-        :param Package pack: the Package object to be added to the queue
-        """
-        self.queue.append(pack)
-
     def initialize_connection(self, accel_port: int, id: int):
         """
         :param SerialID accel_port: i2c address specific accelerometer being connected to
@@ -140,10 +122,10 @@ class Controller:
         :returns an accelerometer object representing the accelerometer connected to
         """
         try:
-            i2c = board.I2C()
-            accelerometer = adafruit_adxl37x.ADXL375(i2c, accel_port)
+            accelerometer = adafruit_adxl37x.ADXL375(self.i2c, accel_port)
         except:
-            raise Exception(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
+            print(f"Failed to connect to i2c device with accel_port={accel_port} and id={id}")
+
         self.accel_ports[id] = accelerometer
         return accelerometer
 
@@ -158,14 +140,14 @@ class Controller:
         for index in self.accel_ports:
             packet = self.get_accelerometer_packet(index)
             packets.append(packet)
-        package = self.assemble_package(packets)
-        self.add_package_to_queue(package)
+        package = Package(self.time, packets)
+        self.queue.append(package)
         if package.severity_rating == Severity.HIGH:
             self.alarm_flag = True
         if self.alarm_flag:
             self.cycles_before_report -= 1
         if self.cycles_before_report == 0:
-            data = self.create_impact_data()
+            data = ImpactData(self.queue)
             self.alert_user(data)
             self.alarm_flag = False
             self.cycles_before_report = CYCLES
