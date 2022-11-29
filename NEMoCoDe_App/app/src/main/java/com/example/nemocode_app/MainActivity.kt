@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("Bluetooth", "Found paired bt device: " + device.name + "   " + device.address + "   " + device.bondState)
             if (device.name.contains("nemocode")) {
                 deviceFragmentViewModel.btDevices[device.name] = device
-                connectDevice(device)
+                //connectDevice(device)
             }
         }
     }
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity() {
                         Log.d("Bluetooth", "Bluetooth device found ${device.name}  ${device.address}")
                         if (device.name.contains("nemocode")) {
                             deviceFragmentViewModel.btDevices[device.name] = device
-                            connectDevice(device)
+                            //connectDevice(device)
                         }
                     }
                 }
