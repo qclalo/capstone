@@ -8,9 +8,10 @@ import adafruit_tca9548a
 import bluetooth
 import subprocess
 import sys
+import smbus
 
 """
-I2C Addresses for the accelerometers
+I2C Addresses for the ADXL375 accelerometers
 """
 DEVICE_ADDRESS = 0x1D
 READ_ADDRESS = 0x3B
@@ -19,6 +20,16 @@ WRITE_ADDRESS = 0x3A
 DEVICE_ADDRESS_ALT = 0x53
 READ_ADDRESS_ALT = 0xA7
 WRITE_ADDRESS_ALT = 0xA6
+
+"""
+Read Addresses for I3G4250D Gyroscope
+"""
+OUT_X_L = 0x28
+OUT_X_H = 0x29
+OUT_Y_L = 0x2A
+OUT_Y_H = 0x2B
+OUT_Z_L = 0x2C
+OUT_Z_H = 0x2D
 
 """
 Number of accelerometers in use by the device
@@ -36,6 +47,13 @@ Thresholds for low, medium, and high instantaneous acceleration alerts in g's
 ACCEL_THRESHOLD_LOW = 30
 ACCEL_THRESHOLD_MEDIUM = 60
 ACCEL_THRESHOLD_HIGH = 90
+
+"""
+Thresholds for low, medium, and high rotational acceleration alerts in rads/s^2
+"""
+ROT_THRESHOLD_LOW = 1000
+ROT_THRESHOLD_MEDIUM = 1747
+ROT_THRESHOLD_HIGH = 2296
 
 """
 Size, in bytes, of the data transmission from nemocode to app
@@ -68,6 +86,14 @@ class AccelerometerPacket:
     def accel_magnitude(self):
         return sqrt((self.x ** 2) + (self.y ** 2) + (self.z ** 2))
 
+class GyroscopePacket:
+    def __init__(self, x: float, y: float, z: float):
+        self.x = x
+        self.y = y
+        self.z = z
+
+    def rot_magnitude(self):
+        return sqrt((self.x ** 2) + (self.y ** 2) + (self.z ** 2))
 
 class Package:
     def __init__(self, t: float, packs):
@@ -75,6 +101,7 @@ class Package:
         self.t = t
         self.packs = packs
         self.max_acceleration = max([pack.accel_magnitude() for pack in packs])
+        self.max_rot = bus.read_byte_data()
         self.severity_rating = self.calculate_package_severity()
 
     def calculate_package_severity(self):
