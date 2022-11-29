@@ -8,6 +8,18 @@ import bluetooth
 import subprocess
 import sys
 
+
+"""
+I2C Addresses for the ADXL375 accelerometers
+"""
+DEVICE_ADDRESS = 0x1D
+READ_ADDRESS = 0x3B
+WRITE_ADDRESS = 0x3A
+
+DEVICE_ADDRESS_ALT = 0x53
+READ_ADDRESS_ALT = 0xA7
+WRITE_ADDRESS_ALT = 0xA6
+
 """
 Data from the accelerometers is in meters per second. Our algorithm uses "g's".
 This constant is used to convert meters per second to g's.
@@ -197,15 +209,12 @@ class Controller:
         """
         Start data collection loop and give diagnostic info to microcontroller/application
         """
-        pass
-
-    def run_standby_loop(self):
-        """
-        Monitor connection with accelerometers for functionality and connection with application for
-        start session indication.
-        """
-        pass
-
+        print('Welcome to NEMoCoDe\n')
+        print('Attempting to establish connection to always-on accelerometer...\n')
+        self.initialize_connection(DEVICE_ADDRESS_ALT, -1)
+        while True:
+            self.run_data_collection_loop()
+        
     def end_session(self):
         print("Closing sockets")
         if self.client is not None:
