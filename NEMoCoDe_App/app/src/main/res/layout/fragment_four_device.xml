@@ -75,7 +75,7 @@
 
         <TextView
             android:id="@+id/username_text_1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
@@ -87,11 +87,27 @@
             app:layout_constraintHorizontal_bias="0.529"
             app:layout_constraintStart_toStartOf="@+id/severity_icon_1"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.137" />
+            app:layout_constraintVertical_bias="0.071" />
+
+        <TextView
+            android:id="@+id/severity_text_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:text="@string/placeholder"
+            android:textAllCaps="true"
+            android:textColor="@color/text_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/username_text_1"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/username_text_1"
+            app:layout_constraintTop_toBottomOf="@+id/username_text_1"
+            app:layout_constraintVertical_bias="0.036" />
 
         <TextView
             android:id="@+id/deviceid_text_1"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
@@ -104,22 +120,6 @@
             app:layout_constraintStart_toStartOf="@+id/username_text_1"
             app:layout_constraintTop_toBottomOf="@+id/severity_icon_1"
             app:layout_constraintVertical_bias="0.381" />
-
-        <TextView
-            android:id="@+id/severity_text_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="8dp"
-            android:gravity="center"
-            android:text="@string/placeholder"
-            android:textAllCaps="true"
-            android:textColor="@color/text_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/username_text_1"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/username_text_1"
-            app:layout_constraintTop_toBottomOf="@+id/username_text_1"
-            app:layout_constraintVertical_bias="0.039" />
 
         <Button
             android:id="@+id/device_button_2"
@@ -151,7 +151,7 @@
 
         <TextView
             android:id="@+id/username_text_2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
@@ -163,11 +163,27 @@
             app:layout_constraintHorizontal_bias="0.529"
             app:layout_constraintStart_toStartOf="@+id/severity_icon_2"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.137" />
+            app:layout_constraintVertical_bias="0.071" />
+
+        <TextView
+            android:id="@+id/severity_text_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:text="@string/placeholder"
+            android:textAllCaps="true"
+            android:textColor="@color/text_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/username_text_2"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/username_text_2"
+            app:layout_constraintTop_toBottomOf="@+id/username_text_2"
+            app:layout_constraintVertical_bias="0.036" />
 
         <TextView
             android:id="@+id/deviceid_text_2"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
@@ -180,22 +196,6 @@
             app:layout_constraintStart_toStartOf="@+id/username_text_2"
             app:layout_constraintTop_toBottomOf="@+id/severity_icon_2"
             app:layout_constraintVertical_bias="0.381" />
-
-        <TextView
-            android:id="@+id/severity_text_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:elevation="8dp"
-            android:gravity="center"
-            android:text="@string/placeholder"
-            android:textAllCaps="true"
-            android:textColor="@color/text_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/username_text_2"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/username_text_2"
-            app:layout_constraintTop_toBottomOf="@+id/username_text_2"
-            app:layout_constraintVertical_bias="0.039" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -240,7 +240,7 @@
 
         <TextView
             android:id="@+id/username_text_3"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
@@ -252,7 +252,7 @@
             app:layout_constraintHorizontal_bias="0.529"
             app:layout_constraintStart_toStartOf="@+id/severity_icon_3"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.137" />
+            app:layout_constraintVertical_bias="0.071" />
 
         <TextView
             android:id="@+id/deviceid_text_3"
@@ -272,7 +272,7 @@
 
         <TextView
             android:id="@+id/severity_text_3"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
@@ -317,7 +317,7 @@
 
         <TextView
             android:id="@+id/username_text_4"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"
@@ -329,7 +329,7 @@
             app:layout_constraintHorizontal_bias="0.529"
             app:layout_constraintStart_toStartOf="@+id/severity_icon_4"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.137" />
+            app:layout_constraintVertical_bias="0.071" />
 
         <TextView
             android:id="@+id/deviceid_text_4"
@@ -349,7 +349,7 @@
 
         <TextView
             android:id="@+id/severity_text_4"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="8dp"
             android:gravity="center"

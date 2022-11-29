@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("Bluetooth", "Paired devices: $btDevices")
         for (device in btDevices) {
             Log.d("Bluetooth", "Found paired bt device: " + device.name + "   " + device.address + "   " + device.bondState)
-            if (device.name.contains("nemocode") || device.name.contains("LAPTOP")) {
+            if (device.name.contains("nemocode")) {
                 deviceFragmentViewModel.btDevices[device.name] = device
                 connectDevice(device)
             }
@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity() {
                     val device = intent?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
                     if (device != null && device.name != null) {
                         Log.d("Bluetooth", "Bluetooth device found ${device.name}  ${device.address}")
-                        if (device.name.contains("nemocode") || device.name.contains("LAPTOP")) {
+                        if (device.name.contains("nemocode")) {
                             deviceFragmentViewModel.btDevices[device.name] = device
                             connectDevice(device)
                         }
@@ -179,15 +179,15 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     fun connectDevice(device: BluetoothDevice) {
         Log.d("Bluetooth", "Connecting to ${device.name}")
-        val port = 5
+        val port = 1
         val m : Method = device.javaClass.getMethod("createRfcommSocket", Int::class.javaPrimitiveType)
         socket = m.invoke(device, port) as BluetoothSocket
         bluetoothAdapter.cancelDiscovery()
         socket.connect()
         Log.d("Bluetooth", "Successfully connected to ${device.name} on port $port")
         //this.monitorConnection(socket)
-        socket.outputStream.write("Hello World".toByteArray())
-        connectedThread = ConnectedThread(socket, this.bluetoothHandler);
+        //socket.outputStream.write("Hello World".toByteArray())
+        //connectedThread = ConnectedThread(socket, this.bluetoothHandler);
 
     }
 
